@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f7f9fc" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>100days</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">100days</div>
+      <button class="icon-button" id="settingsBtn" aria-label="設定">⋯</button>
+    </header>
+
+    <main>
+      <section class="screen active" id="homeScreen" aria-label="ホーム">
+        <div class="elapsed" id="elapsedText">開始から1日目</div>
+
+        <section class="water-section" aria-label="実施日数">
+          <div class="water-orb" id="waterOrb">
+            <canvas id="waterCanvas" width="760" height="760" aria-hidden="true"></canvas>
+            <div class="orb-glass" aria-hidden="true"></div>
+            <div class="orb-label">
+              <div class="count"><span id="completedCount">0</span><span class="slash">/</span><span>100</span></div>
+              <div class="count-label">実施日数</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-card">
+          <div class="detail-row">
+            <div>
+              <div class="detail-label">現在の体重</div>
+              <div class="detail-value"><span id="currentWeight">--</span><small> kg</small></div>
+            </div>
+            <div class="detail-right">
+              <div class="detail-label">開始比</div>
+              <div class="detail-value" id="weightDelta">--</div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="mini-grid">
+            <div class="mini-item"><span>連続実施</span><strong id="streakCount">0日</strong></div>
+            <div class="mini-item"><span>残り</span><strong id="remainingCount">100日</strong></div>
+          </div>
+        </section>
+
+        <button class="primary-action" id="completeTodayBtn">今日を実施済みにする</button>
+        <p class="helper" id="todayStatus">実施した日だけ、水が1%ずつ増えます。</p>
+
+        <section class="today-column" id="todayColumnCard">
+          <div class="eyebrow">TODAY'S COLUMN</div>
+          <h2 id="todayColumnTitle">DAY 1｜減量は「続けられる設計」が9割</h2>
+          <p>今日のコラムを1〜3分で読めます。</p>
+          <button class="text-button" data-open-column="0">読む →</button>
+        </section>
+      </section>
+
+      <section class="screen" id="recordScreen" aria-label="記録">
+        <div class="page-heading">
+          <div class="eyebrow">DAILY LOG</div>
+          <h1>今日の記録</h1>
+          <p>体重などを入力して保存します。</p>
+        </div>
+        <form class="form-card" id="recordForm">
+          <label>体重 <span>kg</span><input id="weightInput" type="number" inputmode="decimal" step="0.1" min="20" max="300" placeholder="例 72.4" /></label>
+          <label>体脂肪率 <span>%</span><input id="fatInput" type="number" inputmode="decimal" step="0.1" min="1" max="70" placeholder="例 24.8" /></label>
+          <label>歩数 <span>steps</span><input id="stepsInput" type="number" inputmode="numeric" min="0" max="100000" placeholder="例 8000" /></label>
+          <label>メモ<textarea id="memoInput" rows="4" placeholder="今日の調子、食事、トレーニングなど"></textarea></label>
+          <button class="primary-action" type="submit">記録を保存</button>
+        </form>
+      </section>
+
+      <section class="screen" id="columnsScreen" aria-label="コラム">
+        <div class="page-heading">
+          <div class="eyebrow">100 COLUMNS</div>
+          <h1>100days コラム</h1>
+          <p>実施日数に合わせて1本ずつ読み進めます。</p>
+        </div>
+        <div class="column-list" id="columnList"></div>
+      </section>
+
+      <section class="screen" id="progressScreen" aria-label="進捗">
+        <div class="page-heading">
+          <div class="eyebrow">PROGRESS</div>
+          <h1>100日の進捗</h1>
+          <p>実施した日だけ塗りつぶされます。</p>
+        </div>
+        <div class="progress-summary">
+          <div><span>実施</span><strong id="progressDone">0</strong></div>
+          <div><span>未実施</span><strong id="progressMissed">0</strong></div>
+          <div><span>残り</span><strong id="progressRemaining">100</strong></div>
+        </div>
+        <div class="day-grid" id="dayGrid"></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="メインナビゲーション">
+      <button class="nav-item active" data-screen="homeScreen"><span class="nav-icon">⌂</span><span>ホーム</span></button>
+      <button class="nav-item" data-screen="recordScreen"><span class="nav-icon">＋</span><span>記録</span></button>
+      <button class="nav-item" data-screen="columnsScreen"><span class="nav-icon">▤</span><span>コラム</span></button>
+      <button class="nav-item" data-screen="progressScreen"><span class="nav-icon">◷</span><span>進捗</span></button>
+    </nav>
+  </div>
+
+  <dialog id="settingsDialog" class="sheet-dialog">
+    <form method="dialog" class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head"><h2>設定</h2><button class="icon-button" value="cancel" aria-label="閉じる">×</button></div>
+      <label>開始日<input id="startDateInput" type="date" /></label>
+      <label>開始体重（kg）<input id="startWeightInput" type="number" step="0.1" min="20" max="300" placeholder="例 74.0" /></label>
+      <button class="primary-action" id="saveSettingsBtn" value="default">保存</button>
+      <button class="danger-button" id="resetBtn" type="button">すべての記録をリセット</button>
+    </form>
+  </dialog>
+
+  <dialog id="columnDialog" class="article-dialog">
+    <article class="article-sheet">
+      <button class="article-close" id="closeColumnBtn" aria-label="閉じる">×</button>
+      <div class="eyebrow" id="articleDay">DAY 1</div>
+      <h1 id="articleTitle"></h1>
+      <div class="article-body" id="articleBody"></div>
+    </article>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
