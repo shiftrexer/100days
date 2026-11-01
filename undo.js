@@ -39,15 +39,15 @@ function ensureCrabStyle(){
     #crabPasser{
       position:absolute;
       left:-16%;
-      width:42px;
-      height:31px;
+      width:38px;
+      height:25px;
       pointer-events:none;
       z-index:3;
       opacity:0;
       filter:drop-shadow(0 2px 5px rgba(39,73,121,.16));
       will-change:left,transform;
     }
-    #crabPasser svg{display:block;width:100%;height:100%;overflow:visible}
+    #crabPasser img{display:block;width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply;}
     #crabPasser.show{
       opacity:.96;
       animation:crab-pass 8.2s linear infinite;
@@ -64,55 +64,8 @@ function ensureCrabStyle(){
   document.head.appendChild(style);
 }
 
-function crabSvg(){
-  return `
-    <svg viewBox="0 0 86 58" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <defs>
-        <linearGradient id="crabBodyGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#FF6A38"/>
-          <stop offset="58%" stop-color="#F34A1C"/>
-          <stop offset="100%" stop-color="#D63816"/>
-        </linearGradient>
-        <linearGradient id="crabClawGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#FF7346"/>
-          <stop offset="70%" stop-color="#E24318"/>
-          <stop offset="100%" stop-color="#C93415"/>
-        </linearGradient>
-      </defs>
-
-      <g fill="none" stroke="#DE471D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M29 36 19 42 13 50"/>
-        <path d="M32 41 24 50"/>
-        <path d="M27 30 16 27 10 21"/>
-        <path d="M57 36 67 42 73 50"/>
-        <path d="M54 41 62 50"/>
-        <path d="M59 30 70 27 76 21"/>
-      </g>
-
-      <ellipse cx="43" cy="31" rx="24" ry="16" fill="url(#crabBodyGrad)"/>
-      <ellipse cx="43" cy="28" rx="18" ry="8" fill="rgba(255,132,93,.26)"/>
-      <ellipse cx="43" cy="31" rx="24" ry="16" fill="none" stroke="rgba(182,43,17,.28)" stroke-width="1.2"/>
-
-      <path d="M18 29c-7.3 0-12.2-4-12.2-9.6 0-3.1 1.8-6 5-7.8.2 4.1 2.9 7 8.1 8.2"
-        fill="url(#crabClawGrad)" stroke="rgba(185,48,21,.24)" stroke-width="1.1" stroke-linejoin="round"/>
-      <path d="M68 29c7.3 0 12.2-4 12.2-9.6 0-3.1-1.8-6-5-7.8-.2 4.1-2.9 7-8.1 8.2"
-        fill="url(#crabClawGrad)" stroke="rgba(185,48,21,.24)" stroke-width="1.1" stroke-linejoin="round"/>
-
-      <path d="M12 12.5c4.3.6 7 2.5 8.7 5.9" fill="none" stroke="#70331F" stroke-width="4.2" stroke-linecap="round"/>
-      <path d="M74 12.5c-4.3.6-7 2.5-8.7 5.9" fill="none" stroke="#70331F" stroke-width="4.2" stroke-linecap="round"/>
-
-      <g fill="#70331F">
-        <path d="M10 21c3.1.4 5.9 1.7 8 3.7-2.8.1-5.7-1.2-8-3.7Z"/>
-        <path d="M76 21c-3.1.4-5.9 1.7-8 3.7 2.8.1 5.7-1.2 8-3.7Z"/>
-        <path d="M13 50c1.6-2.8 4.1-4.9 7.1-6.3-.8 3-3.1 5.5-7.1 6.3Z"/>
-        <path d="M73 50c-1.6-2.8-4.1-4.9-7.1-6.3.8 3 3.1 5.5 7.1 6.3Z"/>
-      </g>
-
-      <ellipse cx="37.5" cy="17.6" rx="2.6" ry="3.5" fill="#161616"/>
-      <ellipse cx="48.5" cy="17.6" rx="2.6" ry="3.5" fill="#161616"/>
-      <ellipse cx="36.8" cy="16.8" rx=".65" ry=".9" fill="rgba(255,255,255,.7)"/>
-      <ellipse cx="47.8" cy="16.8" rx=".65" ry=".9" fill="rgba(255,255,255,.7)"/>
-    </svg>`;
+function crabImage(){
+  return `<img src="data:image/jpeg;base64,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" alt="" aria-hidden="true">`;
 }
 
 function ensureCrabElement(){
@@ -123,7 +76,7 @@ function ensureCrabElement(){
     crab=document.createElement('div');
     crab.id='crabPasser';
     crab.setAttribute('aria-hidden','true');
-    crab.innerHTML=crabSvg();
+    crab.innerHTML=crabImage();
     const label=orb.querySelector('.orb-label');
     if(label)orb.insertBefore(crab,label);
     else orb.appendChild(crab);
