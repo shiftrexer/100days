@@ -129,7 +129,7 @@ function updateCrabPasser(){
   const crab=ensureCrabElement();
   if(!crab)return;
   const day=getCrabElapsedDay();
-  const visible=day>=10&&day<=19;
+  const visible=day>=10;
   crab.classList.toggle('show',visible);
   if(visible)crab.style.top=`${100-day/2}%`;
 }
