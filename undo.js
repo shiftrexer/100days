@@ -44,8 +44,8 @@ function ensureSeaStyle(){
       80%{transform:translateY(-49%) rotate(1deg)}
       100%{left:-16%;transform:translateY(-52%) rotate(-1deg)}
     }
-    #clownfishPasser{left:-16%;width:34px;height:20px;filter:drop-shadow(0 2px 4px rgba(35,95,173,.12));}
-    #clownfishPasser.show{opacity:.96;animation:clownfish-pass 17s linear infinite;}
+    #clownfishPasser{left:-16%;width:38px;height:24px;filter:drop-shadow(0 2px 4px rgba(35,95,173,.12));}
+    #clownfishPasser.show{opacity:.98;animation:clownfish-pass 17s linear infinite;}
     @keyframes clownfish-pass{
       0%{left:-16%;transform:translateY(-50%) rotate(1deg)}
       20%{transform:translateY(-54%) rotate(-1deg)}
@@ -54,8 +54,8 @@ function ensureSeaStyle(){
       80%{transform:translateY(-49%) rotate(1deg)}
       100%{left:106%;transform:translateY(-51%) rotate(0deg)}
     }
-    #tangPasser{left:-18%;width:38px;height:22px;filter:drop-shadow(0 2px 4px rgba(35,95,173,.12));}
-    #tangPasser.show{opacity:.95;animation:tang-pass 21s linear infinite;animation-delay:-7s;}
+    #tangPasser{left:-18%;width:41px;height:25px;filter:drop-shadow(0 2px 4px rgba(35,95,173,.12));}
+    #tangPasser.show{opacity:.98;animation:tang-pass 21s linear infinite;animation-delay:-7s;}
     @keyframes tang-pass{
       0%{left:-18%;transform:translateY(-50%) rotate(-1deg)}
       18%{transform:translateY(-53%) rotate(1deg)}
@@ -113,45 +113,51 @@ function crabSvg(){
 
 function clownfishSvg(){
   return `
-  <svg viewBox="0 0 140 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
-      <linearGradient id="cfOrange" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#ff8a30"/>
-        <stop offset="1" stop-color="#ff5b1c"/>
+      <linearGradient id="cfOrange2" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#ff9825"/>
+        <stop offset="1" stop-color="#ff6c0d"/>
       </linearGradient>
     </defs>
-    <path d="M18 40 C18 24 32 14 56 14 C72 14 88 20 98 30 C106 31 114 25 122 18 C121 28 119 36 112 42 C120 49 122 57 122 66 C114 58 107 52 98 52 C88 61 72 66 56 66 C32 66 18 56 18 40 Z" fill="url(#cfOrange)"/>
-    <path d="M52 15 C46 9 40 8 35 9 C40 15 41 21 40 28" fill="#ff6f27" opacity=".95"/>
-    <path d="M52 65 C46 71 40 72 35 71 C40 65 41 59 40 52" fill="#ff6f27" opacity=".95"/>
-    <path d="M37 18 C34 25 34 55 37 62" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round"/>
-    <path d="M63 16 C60 24 60 56 63 64" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round"/>
-    <path d="M89 23 C86 30 86 50 89 57" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round"/>
-    <path d="M37 18 C34 25 34 55 37 62" fill="none" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round" opacity=".6"/>
-    <path d="M63 16 C60 24 60 56 63 64" fill="none" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round" opacity=".6"/>
-    <path d="M89 23 C86 30 86 50 89 57" fill="none" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round" opacity=".6"/>
-    <ellipse cx="31" cy="35" rx="4.6" ry="4.8" fill="#141414"/>
-    <ellipse cx="29.8" cy="33.6" rx="1" ry="1.1" fill="#ffffff" opacity=".8"/>
+    <g stroke="#2e1a16" stroke-width="7" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M24 50 C24 27 43 14 74 14 C104 14 126 29 136 50 C126 71 104 86 74 86 C43 86 24 73 24 50 Z" fill="url(#cfOrange2)"/>
+      <path d="M26 50 C17 43 10 34 7 23 C20 23 31 29 39 38 L39 62 C31 71 20 77 7 77 C10 66 17 57 26 50 Z" fill="#ff7d0f"/>
+      <path d="M70 15 C63 6 54 4 47 7 C53 14 56 21 57 29" fill="#ff8616"/>
+      <path d="M70 85 C63 94 54 96 47 93 C53 86 56 79 57 71" fill="#ff8616"/>
+      <ellipse cx="84" cy="57" rx="16" ry="13" fill="#ff7b10"/>
+      <path d="M50 18 C43 30 43 70 50 82" fill="#fffdf8"/>
+      <path d="M84 15 C76 29 76 71 84 85" fill="#fffdf8"/>
+      <path d="M116 26 C107 38 107 62 116 74" fill="#fffdf8"/>
+    </g>
+    <path d="M37 31 C41 25 46 21 51 19" fill="none" stroke="#ffb060" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+    <path d="M17 40 C20 36 24 34 29 33" fill="none" stroke="#ffab53" stroke-width="4" stroke-linecap="round" opacity=".55"/>
   </svg>`;
 }
 
 function tangSvg(){
   return `
-  <svg viewBox="0 0 150 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <svg viewBox="0 0 170 105" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
-      <linearGradient id="tbBlue" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#4bc2ff"/>
-        <stop offset="1" stop-color="#1b73ff"/>
+      <linearGradient id="tbBlue2" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#2f74ff"/>
+        <stop offset="1" stop-color="#2054e9"/>
+      </linearGradient>
+      <linearGradient id="tbYellow2" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#ffd943"/>
+        <stop offset="1" stop-color="#ffc61a"/>
       </linearGradient>
     </defs>
-    <path d="M22 45 C22 25 42 13 72 13 C93 13 110 23 118 36 C126 38 133 32 140 24 C138 36 134 45 128 51 C134 58 138 67 140 80 C133 72 126 66 118 64 C109 76 93 84 72 84 C42 84 22 66 22 45 Z" fill="url(#tbBlue)"/>
-    <path d="M88 20 C100 24 109 34 112 47 C110 60 100 69 88 73 C90 63 92 52 92 46 C92 38 90 28 88 20 Z" fill="#ffe24d"/>
-    <path d="M42 14 C38 21 37 28 37 36 C30 34 26 30 23 24 C28 18 34 15 42 14 Z" fill="#ffe24d"/>
-    <path d="M42 76 C38 69 37 62 37 54 C30 56 26 60 23 66 C28 72 34 75 42 76 Z" fill="#ffe24d"/>
-    <path d="M116 36 C121 34 126 30 131 24 C130 34 127 40 122 45" fill="#ffe24d"/>
-    <path d="M116 54 C121 56 126 60 131 66 C130 56 127 50 122 45" fill="#ffe24d"/>
-    <path d="M48 30 C62 24 84 24 98 32" fill="none" stroke="#89deff" stroke-width="4" stroke-linecap="round" opacity=".55"/>
-    <ellipse cx="36" cy="39" rx="4.6" ry="4.8" fill="#141414"/>
-    <ellipse cx="34.7" cy="37.6" rx="1" ry="1.1" fill="#ffffff" opacity=".8"/>
+    <g stroke="#2e1a16" stroke-width="7" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M24 53 C24 28 47 13 82 13 C114 13 134 28 142 45 C145 51 145 57 142 63 C133 82 112 92 82 92 C48 92 24 77 24 53 Z" fill="url(#tbBlue2)"/>
+      <path d="M142 45 L163 32 C166 43 166 63 163 74 L142 63 Z" fill="url(#tbYellow2)"/>
+      <path d="M49 29 C68 14 103 16 125 31 C117 31 110 35 105 43 C99 36 90 32 81 32 C72 32 65 36 59 44 C56 37 53 33 49 29 Z" fill="#2e1a16"/>
+      <path d="M59 44 C68 34 75 31 82 31 C89 31 97 35 105 43 C114 43 123 41 132 38 C126 51 126 61 132 69 C120 65 112 64 104 65 C95 73 87 76 78 76 C68 76 58 71 50 62 C57 58 61 52 59 44 Z" fill="#2e1a16"/>
+      <ellipse cx="91" cy="41" rx="17" ry="10" fill="#2f74ff" stroke="none"/>
+      <path d="M83 64 C92 70 102 72 112 70 C107 79 101 83 94 85 C89 79 85 72 83 64 Z" fill="url(#tbYellow2)"/>
+    </g>
+    <path d="M43 34 C48 27 54 23 61 21" fill="none" stroke="#70a2ff" stroke-width="5" stroke-linecap="round" opacity=".65"/>
+    <path d="M40 76 C61 88 93 88 117 76" fill="none" stroke="#5fa5ff" stroke-width="5" stroke-linecap="round" opacity=".7"/>
   </svg>`;
 }
 
