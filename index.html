@@ -22,7 +22,7 @@
         <div class="elapsed" id="elapsedText">開始から1日目</div>
 
         <section class="water-section" aria-label="実施日数">
-          <div class="water-orb" id="waterOrb">
+          <div class="water-orb" id="waterOrb" role="button" tabindex="0" aria-label="今日を実施済みにする" aria-disabled="false">
             <canvas id="waterCanvas" width="760" height="760" aria-hidden="true"></canvas>
             <div class="orb-glass" aria-hidden="true"></div>
             <div class="orb-label">
@@ -50,8 +50,7 @@
           </div>
         </section>
 
-        <button class="primary-action" id="completeTodayBtn">今日を実施済みにする</button>
-        <p class="helper" id="todayStatus">実施した日だけ、水が1%ずつ増えます。</p>
+        <p class="helper" id="todayStatus">丸をタップすると、今日を実施済みにできます。</p>
 
         <section class="today-column" id="todayColumnCard">
           <div class="eyebrow">TODAY'S COLUMN</div>
