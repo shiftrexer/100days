@@ -39,29 +39,49 @@ function ensureCrabStyle(){
   style.textContent=`
     #crabPasser{
       position:absolute;
-      left:-14%;
-      font-size:30px;
-      line-height:1;
+      left:-18%;
+      width:48px;
+      height:36px;
       pointer-events:none;
       z-index:3;
       opacity:0;
-      filter:drop-shadow(0 2px 6px rgba(4,67,146,.22));
+      filter:drop-shadow(0 3px 8px rgba(3,83,170,.16));
       will-change:left,transform;
     }
+    #crabPasser svg{display:block;width:100%;height:100%;overflow:visible}
     #crabPasser.show{
-      opacity:.92;
-      animation:crab-pass 7.8s linear infinite;
+      opacity:.88;
+      animation:crab-pass 8.4s linear infinite;
     }
     @keyframes crab-pass{
-      0%{left:-14%;transform:translateY(-50%) rotate(-3deg)}
-      20%{transform:translateY(-57%) rotate(2deg)}
-      40%{transform:translateY(-48%) rotate(-2deg)}
-      60%{transform:translateY(-56%) rotate(2deg)}
-      80%{transform:translateY(-49%) rotate(-2deg)}
-      100%{left:108%;transform:translateY(-53%) rotate(2deg)}
+      0%{left:-18%;transform:translateY(-50%) rotate(-2deg)}
+      20%{transform:translateY(-55%) rotate(1deg)}
+      40%{transform:translateY(-48%) rotate(-1deg)}
+      60%{transform:translateY(-54%) rotate(1deg)}
+      80%{transform:translateY(-49%) rotate(-1deg)}
+      100%{left:108%;transform:translateY(-52%) rotate(1deg)}
     }
   `;
   document.head.appendChild(style);
+}
+
+function crabSvg(){
+  return `
+    <svg viewBox="0 0 56 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g fill="none" stroke="rgba(239,249,255,.92)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 27 10 31 6 35"/>
+        <path d="M17 30 13 35"/>
+        <path d="M40 27 46 31 50 35"/>
+        <path d="M39 30 43 35"/>
+        <path d="M15 20 9 18 5 14"/>
+        <path d="M41 20 47 18 51 14"/>
+      </g>
+      <path d="M15 15c0-5 4.8-8 13-8s13 3 13 8v8c0 5.2-4.8 8-13 8s-13-2.8-13-8z"
+        fill="rgba(225,244,255,.82)" stroke="rgba(255,255,255,.94)" stroke-width="1.5"/>
+      <path d="M17.5 13.2c3.4-3 17.7-3 21 0" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M12 18c-4.4 0-7.5-2.5-7.5-6.2 0-2.1 1.3-4 3.5-5.1-.1 2.6 1.4 4.5 4.2 5.4" fill="rgba(231,247,255,.82)" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M44 18c4.4 0 7.5-2.5 7.5-6.2 0-2.1-1.3-4-3.5-5.1.1 2.6-1.4 4.5-4.2 5.4" fill="rgba(231,247,255,.82)" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
 }
 
 function ensureCrabElement(){
@@ -72,7 +92,7 @@ function ensureCrabElement(){
     crab=document.createElement('div');
     crab.id='crabPasser';
     crab.setAttribute('aria-hidden','true');
-    crab.textContent='🦀';
+    crab.innerHTML=crabSvg();
     const label=orb.querySelector('.orb-label');
     if(label)orb.insertBefore(crab,label);
     else orb.appendChild(crab);
@@ -88,7 +108,7 @@ function updateCrabPasser(){
   const visible=day>=10&&day<=19;
   crab.classList.toggle('show',visible);
   if(visible){
-    // 10〜19%の水位でも、カニが水の中ほどを通る位置に合わせる
+    // 10〜19%の水位でも、水の中ほどを通る位置に合わせる
     crab.style.top=`${100-day/2}%`;
   }
 }
