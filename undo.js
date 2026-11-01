@@ -12,7 +12,6 @@ function undoCurrentDay(){
 const undoBtn=document.querySelector('#undoTodayBtn');
 if(undoBtn) undoBtn.onclick=undoCurrentDay;
 
-// 水中の横筋（caustics）は表示しない
 if(typeof drawCaustics==='function'){
   drawCaustics=()=>{};
 }
@@ -39,27 +38,27 @@ function ensureCrabStyle(){
   style.textContent=`
     #crabPasser{
       position:absolute;
-      left:-22%;
-      width:58px;
-      height:48px;
+      left:-16%;
+      width:42px;
+      height:31px;
       pointer-events:none;
       z-index:3;
       opacity:0;
-      filter:drop-shadow(0 3px 8px rgba(1,77,156,.20));
+      filter:drop-shadow(0 2px 5px rgba(39,73,121,.16));
       will-change:left,transform;
     }
     #crabPasser svg{display:block;width:100%;height:100%;overflow:visible}
     #crabPasser.show{
       opacity:.96;
-      animation:crab-pass 8.4s linear infinite;
+      animation:crab-pass 8.2s linear infinite;
     }
     @keyframes crab-pass{
-      0%{left:-22%;transform:translateY(-50%) rotate(-2deg)}
-      20%{transform:translateY(-55%) rotate(1deg)}
+      0%{left:-16%;transform:translateY(-50%) rotate(-2deg)}
+      20%{transform:translateY(-54%) rotate(1deg)}
       40%{transform:translateY(-48%) rotate(-1deg)}
-      60%{transform:translateY(-54%) rotate(1deg)}
+      60%{transform:translateY(-53%) rotate(1deg)}
       80%{transform:translateY(-49%) rotate(-1deg)}
-      100%{left:108%;transform:translateY(-52%) rotate(1deg)}
+      100%{left:106%;transform:translateY(-52%) rotate(1deg)}
     }
   `;
   document.head.appendChild(style);
@@ -67,59 +66,52 @@ function ensureCrabStyle(){
 
 function crabSvg(){
   return `
-    <svg viewBox="0 0 88 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <svg viewBox="0 0 86 58" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <defs>
-        <linearGradient id="crabBody" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#ff5d36"/>
-          <stop offset="1" stop-color="#e93d24"/>
+        <linearGradient id="crabBodyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FF6A38"/>
+          <stop offset="58%" stop-color="#F34A1C"/>
+          <stop offset="100%" stop-color="#D63816"/>
         </linearGradient>
-        <linearGradient id="crabClaw" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#ff7048"/>
-          <stop offset="1" stop-color="#e74629"/>
+        <linearGradient id="crabClawGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#FF7346"/>
+          <stop offset="70%" stop-color="#E24318"/>
+          <stop offset="100%" stop-color="#C93415"/>
         </linearGradient>
       </defs>
 
-      <!-- eye stalks -->
-      <path d="M35 25c0-5 1.4-8 4-10" fill="none" stroke="#cf3522" stroke-width="3.2" stroke-linecap="round"/>
-      <path d="M53 25c0-5-1.4-8-4-10" fill="none" stroke="#cf3522" stroke-width="3.2" stroke-linecap="round"/>
-      <circle cx="39" cy="14" r="3.2" fill="#1d2430"/>
-      <circle cx="49" cy="14" r="3.2" fill="#1d2430"/>
-
-      <!-- rear legs -->
-      <g fill="none" stroke="#e5482c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M28 42 17 46 8 43"/>
-        <path d="M28 49 16 54 8 58"/>
-        <path d="M29 55 20 62 16 67"/>
-        <path d="M60 42 71 46 80 43"/>
-        <path d="M60 49 72 54 80 58"/>
-        <path d="M59 55 68 62 72 67"/>
-      </g>
-      <g fill="#7b331f">
-        <path d="M5 40 12 43 8 46z"/>
-        <path d="M5 57 12 56 8 61z"/>
-        <path d="M14 66 21 62 17 69z"/>
-        <path d="M83 40 76 43 80 46z"/>
-        <path d="M83 57 76 56 80 61z"/>
-        <path d="M74 66 67 62 71 69z"/>
+      <g fill="none" stroke="#DE471D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M29 36 19 42 13 50"/>
+        <path d="M32 41 24 50"/>
+        <path d="M27 30 16 27 10 21"/>
+        <path d="M57 36 67 42 73 50"/>
+        <path d="M54 41 62 50"/>
+        <path d="M59 30 70 27 76 21"/>
       </g>
 
-      <!-- claw arms -->
-      <path d="M30 34c-7-2-10-7-10-13" fill="none" stroke="#d93a25" stroke-width="7" stroke-linecap="round"/>
-      <path d="M58 34c7-2 10-7 10-13" fill="none" stroke="#d93a25" stroke-width="7" stroke-linecap="round"/>
+      <ellipse cx="43" cy="31" rx="24" ry="16" fill="url(#crabBodyGrad)"/>
+      <ellipse cx="43" cy="28" rx="18" ry="8" fill="rgba(255,132,93,.26)"/>
+      <ellipse cx="43" cy="31" rx="24" ry="16" fill="none" stroke="rgba(182,43,17,.28)" stroke-width="1.2"/>
 
-      <!-- claws -->
-      <g>
-        <path d="M20 24c-9-1-15-8-15-17 0-3 1-6 3-8 5 1 9 4 12 8 2-5 6-8 11-9 1 2 2 5 2 8 0 9-6 17-13 18z" fill="url(#crabClaw)"/>
-        <path d="M14 3c3 1 6 3 8 6 2-4 5-6 9-7-2-3-6-5-10-5-4 0-7 2-9 6z" fill="#78351f" opacity=".95"/>
-        <path d="M68 24c9-1 15-8 15-17 0-3-1-6-3-8-5 1-9 4-12 8-2-5-6-8-11-9-1 2-2 5-2 8 0 9 6 17 13 18z" fill="url(#crabClaw)"/>
-        <path d="M74 3c-3 1-6 3-8 6-2-4-5-6-9-7 2-3 6-5 10-5 4 0 7 2 9 6z" fill="#78351f" opacity=".95"/>
+      <path d="M18 29c-7.3 0-12.2-4-12.2-9.6 0-3.1 1.8-6 5-7.8.2 4.1 2.9 7 8.1 8.2"
+        fill="url(#crabClawGrad)" stroke="rgba(185,48,21,.24)" stroke-width="1.1" stroke-linejoin="round"/>
+      <path d="M68 29c7.3 0 12.2-4 12.2-9.6 0-3.1-1.8-6-5-7.8-.2 4.1-2.9 7-8.1 8.2"
+        fill="url(#crabClawGrad)" stroke="rgba(185,48,21,.24)" stroke-width="1.1" stroke-linejoin="round"/>
+
+      <path d="M12 12.5c4.3.6 7 2.5 8.7 5.9" fill="none" stroke="#70331F" stroke-width="4.2" stroke-linecap="round"/>
+      <path d="M74 12.5c-4.3.6-7 2.5-8.7 5.9" fill="none" stroke="#70331F" stroke-width="4.2" stroke-linecap="round"/>
+
+      <g fill="#70331F">
+        <path d="M10 21c3.1.4 5.9 1.7 8 3.7-2.8.1-5.7-1.2-8-3.7Z"/>
+        <path d="M76 21c-3.1.4-5.9 1.7-8 3.7 2.8.1 5.7-1.2 8-3.7Z"/>
+        <path d="M13 50c1.6-2.8 4.1-4.9 7.1-6.3-.8 3-3.1 5.5-7.1 6.3Z"/>
+        <path d="M73 50c-1.6-2.8-4.1-4.9-7.1-6.3.8 3 3.1 5.5 7.1 6.3Z"/>
       </g>
 
-      <!-- body -->
-      <rect x="26" y="27" width="36" height="31" rx="13" fill="url(#crabBody)"/>
-      <ellipse cx="38" cy="36" rx="4" ry="2" fill="rgba(255,255,255,.16)"/>
-      <ellipse cx="52" cy="48" rx="3" ry="1.5" fill="rgba(132,38,23,.16)"/>
-      <ellipse cx="44" cy="53" rx="2.2" ry="1.2" fill="rgba(132,38,23,.12)"/>
+      <ellipse cx="37.5" cy="17.6" rx="2.6" ry="3.5" fill="#161616"/>
+      <ellipse cx="48.5" cy="17.6" rx="2.6" ry="3.5" fill="#161616"/>
+      <ellipse cx="36.8" cy="16.8" rx=".65" ry=".9" fill="rgba(255,255,255,.7)"/>
+      <ellipse cx="47.8" cy="16.8" rx=".65" ry=".9" fill="rgba(255,255,255,.7)"/>
     </svg>`;
 }
 
@@ -147,7 +139,6 @@ function updateCrabPasser(){
   const visible=day>=10&&day<=19;
   crab.classList.toggle('show',visible);
   if(visible){
-    // 10〜19%の水位でも、水の中ほどを通る位置に合わせる
     crab.style.top=`${100-day/2}%`;
   }
 }
