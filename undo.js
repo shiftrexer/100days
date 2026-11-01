@@ -10,3 +10,7 @@ function undoCurrentDay(){
   toast('この日の実施を取り消しました');
 }
 $('#undoTodayBtn').onclick=undoCurrentDay;
+
+if(typeof drawCaustics==='function'){
+  drawCaustics=()=>{};
+}
