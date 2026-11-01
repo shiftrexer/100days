@@ -34,7 +34,7 @@ function ensureCrabStyle(){
   style.textContent=`
     #crabPasser{
       position:absolute;
-      left:-16%;
+      left:106%;
       width:38px;
       height:25px;
       pointer-events:none;
@@ -46,15 +46,15 @@ function ensureCrabStyle(){
     #crabPasser svg{display:block;width:100%;height:100%;overflow:visible}
     #crabPasser.show{
       opacity:.97;
-      animation:crab-pass 8.2s linear infinite;
+      animation:crab-pass 22s linear infinite;
     }
     @keyframes crab-pass{
-      0%{left:-16%;transform:translateY(-50%) rotate(-2deg)}
-      20%{transform:translateY(-54%) rotate(1deg)}
-      40%{transform:translateY(-48%) rotate(-1deg)}
-      60%{transform:translateY(-53%) rotate(1deg)}
-      80%{transform:translateY(-49%) rotate(-1deg)}
-      100%{left:106%;transform:translateY(-52%) rotate(1deg)}
+      0%{left:106%;transform:translateY(-50%) rotate(2deg)}
+      20%{transform:translateY(-54%) rotate(-1deg)}
+      40%{transform:translateY(-48%) rotate(1deg)}
+      60%{transform:translateY(-53%) rotate(-1deg)}
+      80%{transform:translateY(-49%) rotate(1deg)}
+      100%{left:-16%;transform:translateY(-52%) rotate(-1deg)}
     }
   `;
   document.head.appendChild(style);
