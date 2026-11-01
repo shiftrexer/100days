@@ -1,0 +1,11 @@
+{
+  "name": "100days",
+  "short_name": "100days",
+  "description": "100日間の減量を、実施した日だけ積み上げる記録アプリ",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f7fb",
+  "theme_color": "#f4f7fb",
+  "lang": "ja",
+  "icons": [{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
