@@ -39,22 +39,22 @@ function ensureCrabStyle(){
   style.textContent=`
     #crabPasser{
       position:absolute;
-      left:-18%;
-      width:48px;
-      height:36px;
+      left:-22%;
+      width:58px;
+      height:48px;
       pointer-events:none;
       z-index:3;
       opacity:0;
-      filter:drop-shadow(0 3px 8px rgba(3,83,170,.16));
+      filter:drop-shadow(0 3px 8px rgba(1,77,156,.20));
       will-change:left,transform;
     }
     #crabPasser svg{display:block;width:100%;height:100%;overflow:visible}
     #crabPasser.show{
-      opacity:.88;
+      opacity:.96;
       animation:crab-pass 8.4s linear infinite;
     }
     @keyframes crab-pass{
-      0%{left:-18%;transform:translateY(-50%) rotate(-2deg)}
+      0%{left:-22%;transform:translateY(-50%) rotate(-2deg)}
       20%{transform:translateY(-55%) rotate(1deg)}
       40%{transform:translateY(-48%) rotate(-1deg)}
       60%{transform:translateY(-54%) rotate(1deg)}
@@ -67,20 +67,59 @@ function ensureCrabStyle(){
 
 function crabSvg(){
   return `
-    <svg viewBox="0 0 56 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <g fill="none" stroke="rgba(239,249,255,.92)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M16 27 10 31 6 35"/>
-        <path d="M17 30 13 35"/>
-        <path d="M40 27 46 31 50 35"/>
-        <path d="M39 30 43 35"/>
-        <path d="M15 20 9 18 5 14"/>
-        <path d="M41 20 47 18 51 14"/>
+    <svg viewBox="0 0 88 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="crabBody" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ff5d36"/>
+          <stop offset="1" stop-color="#e93d24"/>
+        </linearGradient>
+        <linearGradient id="crabClaw" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ff7048"/>
+          <stop offset="1" stop-color="#e74629"/>
+        </linearGradient>
+      </defs>
+
+      <!-- eye stalks -->
+      <path d="M35 25c0-5 1.4-8 4-10" fill="none" stroke="#cf3522" stroke-width="3.2" stroke-linecap="round"/>
+      <path d="M53 25c0-5-1.4-8-4-10" fill="none" stroke="#cf3522" stroke-width="3.2" stroke-linecap="round"/>
+      <circle cx="39" cy="14" r="3.2" fill="#1d2430"/>
+      <circle cx="49" cy="14" r="3.2" fill="#1d2430"/>
+
+      <!-- rear legs -->
+      <g fill="none" stroke="#e5482c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M28 42 17 46 8 43"/>
+        <path d="M28 49 16 54 8 58"/>
+        <path d="M29 55 20 62 16 67"/>
+        <path d="M60 42 71 46 80 43"/>
+        <path d="M60 49 72 54 80 58"/>
+        <path d="M59 55 68 62 72 67"/>
       </g>
-      <path d="M15 15c0-5 4.8-8 13-8s13 3 13 8v8c0 5.2-4.8 8-13 8s-13-2.8-13-8z"
-        fill="rgba(225,244,255,.82)" stroke="rgba(255,255,255,.94)" stroke-width="1.5"/>
-      <path d="M17.5 13.2c3.4-3 17.7-3 21 0" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="1.4" stroke-linecap="round"/>
-      <path d="M12 18c-4.4 0-7.5-2.5-7.5-6.2 0-2.1 1.3-4 3.5-5.1-.1 2.6 1.4 4.5 4.2 5.4" fill="rgba(231,247,255,.82)" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M44 18c4.4 0 7.5-2.5 7.5-6.2 0-2.1-1.3-4-3.5-5.1.1 2.6-1.4 4.5-4.2 5.4" fill="rgba(231,247,255,.82)" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <g fill="#7b331f">
+        <path d="M5 40 12 43 8 46z"/>
+        <path d="M5 57 12 56 8 61z"/>
+        <path d="M14 66 21 62 17 69z"/>
+        <path d="M83 40 76 43 80 46z"/>
+        <path d="M83 57 76 56 80 61z"/>
+        <path d="M74 66 67 62 71 69z"/>
+      </g>
+
+      <!-- claw arms -->
+      <path d="M30 34c-7-2-10-7-10-13" fill="none" stroke="#d93a25" stroke-width="7" stroke-linecap="round"/>
+      <path d="M58 34c7-2 10-7 10-13" fill="none" stroke="#d93a25" stroke-width="7" stroke-linecap="round"/>
+
+      <!-- claws -->
+      <g>
+        <path d="M20 24c-9-1-15-8-15-17 0-3 1-6 3-8 5 1 9 4 12 8 2-5 6-8 11-9 1 2 2 5 2 8 0 9-6 17-13 18z" fill="url(#crabClaw)"/>
+        <path d="M14 3c3 1 6 3 8 6 2-4 5-6 9-7-2-3-6-5-10-5-4 0-7 2-9 6z" fill="#78351f" opacity=".95"/>
+        <path d="M68 24c9-1 15-8 15-17 0-3-1-6-3-8-5 1-9 4-12 8-2-5-6-8-11-9-1 2-2 5-2 8 0 9 6 17 13 18z" fill="url(#crabClaw)"/>
+        <path d="M74 3c-3 1-6 3-8 6-2-4-5-6-9-7 2-3 6-5 10-5 4 0 7 2 9 6z" fill="#78351f" opacity=".95"/>
+      </g>
+
+      <!-- body -->
+      <rect x="26" y="27" width="36" height="31" rx="13" fill="url(#crabBody)"/>
+      <ellipse cx="38" cy="36" rx="4" ry="2" fill="rgba(255,255,255,.16)"/>
+      <ellipse cx="52" cy="48" rx="3" ry="1.5" fill="rgba(132,38,23,.16)"/>
+      <ellipse cx="44" cy="53" rx="2.2" ry="1.2" fill="rgba(132,38,23,.12)"/>
     </svg>`;
 }
 
