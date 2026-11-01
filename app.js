@@ -37,213 +37,68 @@ const canvas=$('#waterCanvas'),ctx=canvas.getContext('2d');
 function fit(){const dpr=Math.min(devicePixelRatio||1,2),r=canvas.getBoundingClientRect();canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
 addEventListener('resize',fit);fit();
 
-const bubbles=Array.from({length:34},()=>({
-  x:Math.random(),
-  y:Math.random(),
-  r:0.8+Math.random()*4.2,
-  s:.00006+Math.random()*.00018,
-  drift:(Math.random()-.5)*.0018,
-  p:Math.random()*6.28,
-  alpha:.08+Math.random()*.18
-}));
-const particles=Array.from({length:30},()=>({
-  x:Math.random(),
-  y:Math.random(),
-  s:.15+Math.random()*.5,
-  a:.03+Math.random()*.06,
-  p:Math.random()*6.28
-}));
+const bubbles=Array.from({length:34},()=>({x:Math.random(),y:Math.random(),r:.8+Math.random()*4.2,s:.00006+Math.random()*.00018,drift:(Math.random()-.5)*.0018,p:Math.random()*6.28,alpha:.08+Math.random()*.18}));
+const particles=Array.from({length:30},()=>({x:Math.random(),y:Math.random(),s:.15+Math.random()*.5,a:.03+Math.random()*.06,p:Math.random()*6.28}));
 
-function waveY(x,w,baseY,t,amp,freq,phase,speed){
-  return baseY
-    + Math.sin((x/w)*Math.PI*2*freq + t*speed + phase) * amp
-    + Math.sin((x/w)*Math.PI*2*(freq*.52) - t*speed*.72 + phase*.7) * amp * .38
-    + Math.sin((x/w)*Math.PI*2*(freq*1.86) + t*speed*.41 - phase*.3) * amp * .12;
+function surfaceY(x,w,baseY,t,amp){
+  return baseY+Math.sin((x/w)*Math.PI*2*1.08+t*.00105)*amp;
 }
 
-function fillWave(w,h,baseY,t,amp,freq,phase,speed,fill){
-  ctx.beginPath();
-  ctx.moveTo(0,h);
-  ctx.lineTo(0,waveY(0,w,baseY,t,amp,freq,phase,speed));
-  for(let x=0;x<=w;x+=3){
-    ctx.lineTo(x,waveY(x,w,baseY,t,amp,freq,phase,speed));
-  }
-  ctx.lineTo(w,h);
-  ctx.closePath();
-  ctx.fillStyle=fill;
-  ctx.fill();
+function fillWater(w,h,waterTop,t,amp,fill){
+  ctx.beginPath();ctx.moveTo(0,h);ctx.lineTo(0,surfaceY(0,w,waterTop,t,amp));
+  for(let x=0;x<=w;x+=3)ctx.lineTo(x,surfaceY(x,w,waterTop,t,amp));
+  ctx.lineTo(w,h);ctx.closePath();ctx.fillStyle=fill;ctx.fill();
 }
 
-function strokeWave(w,baseY,t,amp,freq,phase,speed,stroke,width,alpha=1){
-  ctx.save();
-  ctx.beginPath();
-  for(let x=0;x<=w;x+=2){
-    const y=waveY(x,w,baseY,t,amp,freq,phase,speed);
-    x?ctx.lineTo(x,y):ctx.moveTo(x,y);
-  }
-  ctx.strokeStyle=stroke;
-  ctx.lineWidth=width;
-  ctx.globalAlpha=alpha;
-  ctx.stroke();
-  ctx.restore();
+function strokeSurface(w,waterTop,t,amp){
+  ctx.save();ctx.beginPath();
+  for(let x=0;x<=w;x+=2){const y=surfaceY(x,w,waterTop,t,amp);x?ctx.lineTo(x,y):ctx.moveTo(x,y)}
+  ctx.strokeStyle='rgba(255,255,255,.72)';ctx.lineWidth=1.6;ctx.stroke();ctx.restore();
 }
 
 function drawCaustics(w,h,waterTop,t){
-  ctx.save();
-  ctx.globalCompositeOperation='screen';
+  ctx.save();ctx.globalCompositeOperation='screen';
   for(let i=0;i<6;i++){
-    const yy=waterTop + 18 + i*22 + Math.sin(t*.00055+i)*5;
+    const yy=waterTop+18+i*22+Math.sin(t*.00055+i)*5;
     const grad=ctx.createLinearGradient(0,yy,w,yy+8);
-    grad.addColorStop(0,'rgba(255,255,255,0)');
-    grad.addColorStop(.18,'rgba(255,255,255,.04)');
-    grad.addColorStop(.5,'rgba(255,255,255,.11)');
-    grad.addColorStop(.82,'rgba(255,255,255,.04)');
-    grad.addColorStop(1,'rgba(255,255,255,0)');
-    ctx.strokeStyle=grad;
-    ctx.lineWidth=7+i*.6;
-    ctx.beginPath();
-    for(let x=0;x<=w;x+=6){
-      const y=yy+Math.sin(x/w*Math.PI*2*(1.2+i*.08)+t*.0012+i)*5+Math.cos(x/w*Math.PI*2*(2.4+i*.15)-t*.001+i)*2;
-      x?ctx.lineTo(x,y):ctx.moveTo(x,y);
-    }
+    grad.addColorStop(0,'rgba(255,255,255,0)');grad.addColorStop(.18,'rgba(255,255,255,.04)');grad.addColorStop(.5,'rgba(255,255,255,.11)');grad.addColorStop(.82,'rgba(255,255,255,.04)');grad.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.strokeStyle=grad;ctx.lineWidth=7+i*.6;ctx.beginPath();
+    for(let x=0;x<=w;x+=6){const y=yy+Math.sin(x/w*Math.PI*2*(1.2+i*.08)+t*.0012+i)*5+Math.cos(x/w*Math.PI*2*(2.4+i*.15)-t*.001+i)*2;x?ctx.lineTo(x,y):ctx.moveTo(x,y)}
     ctx.stroke();
   }
   ctx.restore();
 }
 
 function drawWaterBody(w,h,l,t){
-  if(l<=0) return;
-  const waterTop=h-h*l;
-  const amp=(4.5+7*splash)*(l>0&&l<1?1:0);
-
+  if(l<=0)return;
+  const waterTop=h-h*l,amp=(3.2+5.5*splash)*(l>0&&l<1?1:0);
   const deepGrad=ctx.createLinearGradient(0,waterTop-10,0,h);
-  deepGrad.addColorStop(0,'rgba(118,214,255,.95)');
-  deepGrad.addColorStop(.12,'rgba(74,185,255,.96)');
-  deepGrad.addColorStop(.42,'rgba(30,142,248,.97)');
-  deepGrad.addColorStop(.75,'rgba(8,100,206,.98)');
-  deepGrad.addColorStop(1,'rgba(4,67,146,.99)');
-  fillWave(w,h,waterTop,t,amp,1.18,.2,.00122,deepGrad);
-
-  const midGrad=ctx.createLinearGradient(0,waterTop,0,h);
-  midGrad.addColorStop(0,'rgba(175,234,255,.24)');
-  midGrad.addColorStop(.3,'rgba(126,213,255,.18)');
-  midGrad.addColorStop(1,'rgba(255,255,255,0)');
-  fillWave(w,h,waterTop+3,t,amp*.86,1.72,1.8,-.00105,midGrad);
-
-  const frontGrad=ctx.createLinearGradient(0,waterTop-2,0,h);
-  frontGrad.addColorStop(0,'rgba(255,255,255,.16)');
-  frontGrad.addColorStop(.1,'rgba(181,233,255,.12)');
-  frontGrad.addColorStop(.7,'rgba(11,104,212,.03)');
-  frontGrad.addColorStop(1,'rgba(0,0,0,0)');
-  fillWave(w,h,waterTop+7,t,amp*.62,.88,3.2,.00082,frontGrad);
+  deepGrad.addColorStop(0,'rgba(118,214,255,.95)');deepGrad.addColorStop(.12,'rgba(74,185,255,.96)');deepGrad.addColorStop(.42,'rgba(30,142,248,.97)');deepGrad.addColorStop(.75,'rgba(8,100,206,.98)');deepGrad.addColorStop(1,'rgba(4,67,146,.99)');
+  fillWater(w,h,waterTop,t,amp,deepGrad);
 
   const haze=ctx.createLinearGradient(0,waterTop,0,waterTop+h*.22);
-  haze.addColorStop(0,'rgba(255,255,255,.17)');
-  haze.addColorStop(.45,'rgba(255,255,255,.05)');
-  haze.addColorStop(1,'rgba(255,255,255,0)');
-  ctx.fillStyle=haze;
-  ctx.fillRect(0,waterTop,w,h-waterTop);
-
-  strokeWave(w,waterTop,t,amp*.9,1.18,.2,.00122,'rgba(255,255,255,.72)',1.6,.95);
-  strokeWave(w,waterTop+1.8,t,amp*.48,2.05,2.3,-.0014,'rgba(188,241,255,.38)',1.1,.85);
-  strokeWave(w,waterTop+7,t,amp*.18,4.2,1.1,.0021,'rgba(255,255,255,.11)',.8,.75);
-
+  haze.addColorStop(0,'rgba(255,255,255,.14)');haze.addColorStop(.45,'rgba(255,255,255,.04)');haze.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=haze;ctx.fillRect(0,waterTop,w,h-waterTop);
+  strokeSurface(w,waterTop,t,amp);
   drawCaustics(w,h,waterTop,t);
 
   const sideShade=ctx.createRadialGradient(w*.18,h*.38,10,w*.5,h*.55,w*.72);
-  sideShade.addColorStop(0,'rgba(255,255,255,0)');
-  sideShade.addColorStop(.72,'rgba(0,0,0,0)');
-  sideShade.addColorStop(1,'rgba(4,31,78,.14)');
-  ctx.fillStyle=sideShade;
-  ctx.fillRect(0,0,w,h);
+  sideShade.addColorStop(0,'rgba(255,255,255,0)');sideShade.addColorStop(.72,'rgba(0,0,0,0)');sideShade.addColorStop(1,'rgba(4,31,78,.14)');ctx.fillStyle=sideShade;ctx.fillRect(0,0,w,h);
 
-  ctx.save();
-  ctx.globalCompositeOperation='screen';
-  particles.forEach(p=>{
-    const px=(p.x+Math.sin(t*.00018+p.p)*.01)*w;
-    const py=waterTop+(h-waterTop)*p.y;
-    if(py<waterTop+4)return;
-    ctx.beginPath();
-    ctx.arc(px,py,p.s,0,Math.PI*2);
-    ctx.fillStyle=`rgba(255,255,255,${p.a})`;
-    ctx.fill();
-  });
+  ctx.save();ctx.globalCompositeOperation='screen';
+  particles.forEach(p=>{const px=(p.x+Math.sin(t*.00018+p.p)*.01)*w,py=waterTop+(h-waterTop)*p.y;if(py<waterTop+4)return;ctx.beginPath();ctx.arc(px,py,p.s,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${p.a})`;ctx.fill()});
   ctx.restore();
 
-  bubbles.forEach(b=>{
-    b.y-=b.s*(1+.8*l)*18;
-    b.x+=Math.sin(t*.0008+b.p)*b.drift;
-    if(b.y<-.03){b.y=1.05;b.x=Math.random();b.r=0.8+Math.random()*4.2;b.alpha=.08+Math.random()*.18}
-    if(b.x<-.05)b.x=1.02;
-    if(b.x>1.05)b.x=-.02;
-    const by=waterTop+(h-waterTop)*b.y;
-    if(by<waterTop+10||by>h-8)return;
-    ctx.save();
-    ctx.globalAlpha=.8;
-    ctx.beginPath();
-    ctx.arc(b.x*w+Math.sin(t*.0006+b.p)*2.4,by,b.r,0,Math.PI*2);
-    ctx.fillStyle=`rgba(255,255,255,${b.alpha})`;
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(b.x*w+Math.sin(t*.0006+b.p)*2.4-b.r*.25,by-b.r*.25,b.r*.35,0,Math.PI*2);
-    ctx.fillStyle='rgba(255,255,255,.18)';
-    ctx.fill();
-    ctx.restore();
-  });
+  bubbles.forEach(b=>{b.y-=b.s*(1+.8*l)*18;b.x+=Math.sin(t*.0008+b.p)*b.drift;if(b.y<-.03){b.y=1.05;b.x=Math.random();b.r=.8+Math.random()*4.2;b.alpha=.08+Math.random()*.18}if(b.x<-.05)b.x=1.02;if(b.x>1.05)b.x=-.02;const by=waterTop+(h-waterTop)*b.y;if(by<waterTop+10||by>h-8)return;ctx.save();ctx.globalAlpha=.8;ctx.beginPath();ctx.arc(b.x*w+Math.sin(t*.0006+b.p)*2.4,by,b.r,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${b.alpha})`;ctx.fill();ctx.beginPath();ctx.arc(b.x*w+Math.sin(t*.0006+b.p)*2.4-b.r*.25,by-b.r*.25,b.r*.35,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.18)';ctx.fill();ctx.restore()});
 }
 
 function draw(tms){
-  const w=canvas.clientWidth,h=canvas.clientHeight;
-  if(!w||!h)return requestAnimationFrame(draw);
-  const t=Number(tms)||0;
-  display+=(target-display)*.028;
-  splash*=.958;
-  ctx.clearRect(0,0,w,h);
-
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(w/2,h/2,w/2-2,0,Math.PI*2);
-  ctx.clip();
-
-  const back=ctx.createRadialGradient(w*.33,h*.2,6,w*.54,h*.56,w*.7);
-  back.addColorStop(0,'rgba(255,255,255,.76)');
-  back.addColorStop(.22,'rgba(248,251,255,.48)');
-  back.addColorStop(.5,'rgba(234,241,249,.42)');
-  back.addColorStop(1,'rgba(215,227,239,.72)');
-  ctx.fillStyle=back;
-  ctx.fillRect(0,0,w,h);
-
-  const l=Math.max(0,Math.min(1,display));
-  drawWaterBody(w,h,l,t);
-
-  const topGloss=ctx.createLinearGradient(0,0,0,h*.34);
-  topGloss.addColorStop(0,'rgba(255,255,255,.62)');
-  topGloss.addColorStop(.42,'rgba(255,255,255,.18)');
-  topGloss.addColorStop(1,'rgba(255,255,255,0)');
-  ctx.fillStyle=topGloss;
-  ctx.fillRect(0,0,w,h*.34);
-
-  const lowerGlass=ctx.createLinearGradient(0,h*.55,0,h);
-  lowerGlass.addColorStop(0,'rgba(255,255,255,0)');
-  lowerGlass.addColorStop(.55,'rgba(255,255,255,.05)');
-  lowerGlass.addColorStop(1,'rgba(255,255,255,.13)');
-  ctx.fillStyle=lowerGlass;
-  ctx.fillRect(0,h*.55,w,h*.45);
-
-  ctx.save();
-  ctx.globalCompositeOperation='screen';
-  ctx.fillStyle='rgba(255,255,255,.10)';
-  ctx.beginPath();
-  ctx.ellipse(w*.29,h*.22,w*.14,h*.08,-.55,0,Math.PI*2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(w*.68,h*.78,w*.16,h*.06,.25,0,Math.PI*2);
-  ctx.fill();
-  ctx.restore();
-
-  ctx.restore();
-  requestAnimationFrame(draw);
+  const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return requestAnimationFrame(draw);const t=Number(tms)||0;display+=(target-display)*.028;splash*=.958;ctx.clearRect(0,0,w,h);
+  ctx.save();ctx.beginPath();ctx.arc(w/2,h/2,w/2-2,0,Math.PI*2);ctx.clip();
+  const back=ctx.createRadialGradient(w*.33,h*.2,6,w*.54,h*.56,w*.7);back.addColorStop(0,'rgba(255,255,255,.76)');back.addColorStop(.22,'rgba(248,251,255,.48)');back.addColorStop(.5,'rgba(234,241,249,.42)');back.addColorStop(1,'rgba(215,227,239,.72)');ctx.fillStyle=back;ctx.fillRect(0,0,w,h);
+  const l=Math.max(0,Math.min(1,display));drawWaterBody(w,h,l,t);
+  const topGloss=ctx.createLinearGradient(0,0,0,h*.34);topGloss.addColorStop(0,'rgba(255,255,255,.62)');topGloss.addColorStop(.42,'rgba(255,255,255,.18)');topGloss.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=topGloss;ctx.fillRect(0,0,w,h*.34);
+  const lowerGlass=ctx.createLinearGradient(0,h*.55,0,h);lowerGlass.addColorStop(0,'rgba(255,255,255,0)');lowerGlass.addColorStop(.55,'rgba(255,255,255,.05)');lowerGlass.addColorStop(1,'rgba(255,255,255,.13)');ctx.fillStyle=lowerGlass;ctx.fillRect(0,h*.55,w,h*.45);
+  ctx.save();ctx.globalCompositeOperation='screen';ctx.fillStyle='rgba(255,255,255,.10)';ctx.beginPath();ctx.ellipse(w*.29,h*.22,w*.14,h*.08,-.55,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.ellipse(w*.68,h*.78,w*.16,h*.06,.25,0,Math.PI*2);ctx.fill();ctx.restore();
+  ctx.restore();requestAnimationFrame(draw);
 }
-
-requestAnimationFrame(draw);
-render();
+requestAnimationFrame(draw);render();
