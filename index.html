@@ -83,6 +83,15 @@
           <p>実施日数に合わせて1本ずつ読み進めます。</p>
         </div>
         <div class="column-list" id="columnList"></div>
+
+        <section class="test-code-panel" aria-label="テスト用日付コード">
+          <div class="test-code-label">TEST MODE</div>
+          <div class="test-code-row">
+            <input id="testCodeInput" type="text" inputmode="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="code-001" maxlength="8" />
+            <button id="applyTestCodeBtn" type="button">適用</button>
+          </div>
+          <p id="testCodeStatus">テスト用コードを入力</p>
+        </section>
       </section>
 
       <section class="screen" id="progressScreen" aria-label="進捗">
