@@ -1,4 +1,19 @@
 (()=>{
+  const clipStyle=document.createElement('style');
+  clipStyle.id='waterOrbClipFix';
+  clipStyle.textContent=`
+    #waterOrb{
+      overflow:hidden !important;
+      border-radius:50% !important;
+      contain:paint;
+      isolation:isolate;
+    }
+    #waterOrb:active{
+      transform:none !important;
+    }
+  `;
+  if(!document.getElementById(clipStyle.id))document.head.appendChild(clipStyle);
+
   const creatures={
     crabPasser:{duration:40000,normal:'rtl',normalScale:1},
     clownfishPasser:{duration:15000,normal:'ltr',normalScale:1},
