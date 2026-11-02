@@ -62,7 +62,7 @@
     el.style.animation='none';
     el.style.visibility='hidden';
 
-    const delay=initial?randomBetween(200,7200):randomBetween(1000,5000);
+    const delay=initial?randomBetween(200,15000):randomBetween(1000,7000);
     const timer=setTimeout(()=>{
       pendingStarts.delete(el);
       if(!el.classList.contains('show')||active.has(el))return;
