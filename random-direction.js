@@ -31,6 +31,8 @@
   const active=new Map();
   const pendingStarts=new Map();
   const initialized=new WeakSet();
+  const RARE_CREATURE_ID='pinkFishPasser';
+  const RARE_APPEARANCE_CHANCE=0.15;
   let suppressOrbClickUntil=0;
 
   function randomBetween(min,max){
@@ -66,6 +68,12 @@
     const timer=setTimeout(()=>{
       pendingStarts.delete(el);
       if(!el.classList.contains('show')||active.has(el))return;
+
+      if(el.id===RARE_CREATURE_ID&&Math.random()>=RARE_APPEARANCE_CHANCE){
+        schedulePass(el,cfg,false);
+        return;
+      }
+
       startPass(el,cfg);
     },delay);
     pendingStarts.set(el,timer);
