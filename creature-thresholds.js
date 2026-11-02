@@ -26,9 +26,15 @@
     for(const [id,threshold] of Object.entries(thresholds)){
       const el=document.getElementById(id);
       if(!el)continue;
-      const shouldShow=done>=threshold;
+      let shouldShow=done>=threshold;
+      if(id==='bottlePasser'&&window.BottleLetters){
+        shouldShow=shouldShow&&window.BottleLetters.isAvailable(done);
+      }
       if(el.classList.contains('show')!==shouldShow){
         el.classList.toggle('show',shouldShow);
+      }
+      if(id==='bottlePasser'&&shouldShow&&el.style.visibility==='hidden'){
+        el.style.visibility='';
       }
     }
   }
