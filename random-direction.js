@@ -9,6 +9,7 @@
     penguinPasser:{duration:16000,normal:'rtl',normalScale:1},
     octopusPasser:{duration:34000,normal:'rtl',normalScale:1},
     pufferPasser:{duration:21000,normal:'rtl',normalScale:1},
+    pinkFishPasser:{duration:20000,normal:'ltr',normalScale:1},
     bottlePasser:{duration:60000,normal:'rtl',normalScale:1}
   };
   const active=new Map();
