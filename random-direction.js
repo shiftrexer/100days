@@ -12,7 +12,15 @@
     pinkFishPasser:{duration:20000,normal:'ltr',normalScale:1},
     bottlePasser:{duration:60000,normal:'rtl',normalScale:1}
   };
+  const fishIds=new Set([
+    'clownfishPasser',
+    'tangPasser',
+    'pufferPasser',
+    'pinkFishPasser',
+    'whaleSharkPasser'
+  ]);
   const active=new Map();
+  let suppressOrbClickUntil=0;
 
   function mediaScale(el,cfg,dir){
     if(el.id==='crabPasser')return;
@@ -22,6 +30,19 @@
     const scale=(dir===cfg.normal)?normalFacing:-normalFacing;
     media.style.transform=`scaleX(${scale})`;
     media.style.transformOrigin='center';
+  }
+
+  function registerAnimation(el,cfg,anim,dir,escaping=false){
+    const entry={anim,dir,escaping};
+    active.set(el,entry);
+    anim.onfinish=()=>{
+      if(active.get(el)!==entry)return;
+      active.delete(el);
+      if(el.classList.contains('show'))startPass(el,cfg);
+    };
+    anim.oncancel=()=>{
+      if(active.get(el)===entry)active.delete(el);
+    };
   }
 
   function startPass(el,cfg){
@@ -45,30 +66,95 @@
       {left:to,transform:'translateY(-51%) rotate(0deg)'}
     ],{duration:cfg.duration,easing:'linear',iterations:1,fill:'none'});
 
-    active.set(el,anim);
-    anim.onfinish=()=>{
-      active.delete(el);
-      if(el.classList.contains('show'))startPass(el,cfg);
-    };
-    anim.oncancel=()=>active.delete(el);
+    registerAnimation(el,cfg,anim,dir,false);
+  }
+
+  function flee(el,cfg){
+    const entry=active.get(el);
+    if(!entry||!el.classList.contains('show'))return false;
+
+    const parent=el.offsetParent||el.parentElement;
+    if(!parent)return false;
+
+    const elRect=el.getBoundingClientRect();
+    const parentRect=parent.getBoundingClientRect();
+    if(!parentRect.width)return false;
+
+    const currentLeft=elRect.left-parentRect.left;
+    const dir=entry.dir==='ltr'?'rtl':'ltr';
+    const targetLeft=dir==='ltr'?parentRect.width*1.10:-parentRect.width*0.24;
+    const fullDistance=parentRect.width*1.34;
+    const remaining=Math.abs(targetLeft-currentLeft);
+    const duration=Math.max(250,(cfg.duration*(remaining/fullDistance))/1.5);
+
+    el.style.left=`${currentLeft}px`;
+    entry.anim.cancel();
+    mediaScale(el,cfg,dir);
+
+    const anim=el.animate([
+      {left:`${currentLeft}px`,transform:'translateY(-50%) rotate(-2deg)'},
+      {offset:.22,transform:'translateY(-55%) rotate(2deg)'},
+      {offset:.48,transform:'translateY(-47%) rotate(-2deg)'},
+      {offset:.74,transform:'translateY(-54%) rotate(1deg)'},
+      {left:`${targetLeft}px`,transform:'translateY(-50%) rotate(0deg)'}
+    ],{duration,easing:'linear',iterations:1,fill:'none'});
+
+    registerAnimation(el,cfg,anim,dir,true);
+    return true;
+  }
+
+  function handleAquariumTap(e){
+    if(e.isPrimary===false)return;
+    const orb=document.getElementById('waterOrb');
+    if(!orb)return;
+    const orbRect=orb.getBoundingClientRect();
+    const radius=Math.min(orbRect.width,orbRect.height)*0.10;
+    let affected=0;
+
+    for(const id of fishIds){
+      const el=document.getElementById(id);
+      const cfg=creatures[id];
+      if(!el||!cfg||!el.classList.contains('show')||!active.has(el))continue;
+      const r=el.getBoundingClientRect();
+      const cx=r.left+r.width/2;
+      const cy=r.top+r.height/2;
+      if(Math.hypot(cx-e.clientX,cy-e.clientY)<=radius){
+        if(flee(el,cfg))affected++;
+      }
+    }
+
+    if(affected>0)suppressOrbClickUntil=performance.now()+800;
   }
 
   function sync(){
     for(const [id,cfg] of Object.entries(creatures)){
       const el=document.getElementById(id);
       if(!el)continue;
-      const anim=active.get(el);
+      const entry=active.get(el);
       if(el.classList.contains('show')){
-        if(!anim)startPass(el,cfg);
-      }else if(anim){
-        anim.cancel();
+        if(!entry)startPass(el,cfg);
+      }else if(entry){
+        entry.anim.cancel();
         active.delete(el);
       }
     }
   }
 
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{
-    sync();setInterval(sync,500);
-  });
-  else{sync();setInterval(sync,500)}
+  function init(){
+    sync();
+    setInterval(sync,500);
+    const orb=document.getElementById('waterOrb');
+    if(!orb)return;
+    orb.addEventListener('pointerdown',handleAquariumTap,{passive:true});
+    orb.addEventListener('click',e=>{
+      if(performance.now()<suppressOrbClickUntil){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        suppressOrbClickUntil=0;
+      }
+    },true);
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+  else init();
 })();
