@@ -27,7 +27,8 @@
     pinkFishPasser:{duration:20000,normal:'ltr',normalScale:1},
     bottlePasser:{duration:60000,normal:'rtl',normalScale:1}
   };
-  const reactiveIds=new Set(Object.keys(creatures));
+  const BOTTLE_ID='bottlePasser';
+  const reactiveIds=new Set(Object.keys(creatures).filter(id=>id!==BOTTLE_ID));
   const active=new Map();
   const pendingStarts=new Map();
   const initialized=new WeakSet();
