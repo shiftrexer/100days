@@ -1,5 +1,5 @@
 (()=>{
-  const DIVER_ASSET='diver-asset.svg?v=20261102-stable-diver1';
+  const DIVER_ASSET='diver-hd.png?v=20261102-diver-hd1';
 
   function ensureDiverStyle(){
     if(document.getElementById('diverOverlayStyle'))return;
@@ -62,7 +62,7 @@
         img.draggable=false;
         el.appendChild(img);
       }
-      if(!img.src.includes('diver-asset.svg')) img.src=DIVER_ASSET;
+      if(!img.src.includes('diver-hd.png')) img.src=DIVER_ASSET;
     }
     return el;
   }
