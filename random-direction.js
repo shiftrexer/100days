@@ -4,7 +4,7 @@
     clownfishPasser:{duration:17000,normal:'ltr',normalScale:1},
     tangPasser:{duration:21000,normal:'ltr',normalScale:-1},
     turtlePasser:{duration:24000,normal:'ltr',normalScale:1},
-    diverPasser:{duration:26000,normal:'rtl',normalScale:1},
+    diverPasser:{duration:40000,normal:'rtl',normalScale:1},
     whaleSharkPasser:{duration:29000,normal:'rtl',normalScale:1},
     penguinPasser:{duration:25000,normal:'rtl',normalScale:1},
     octopusPasser:{duration:27000,normal:'rtl',normalScale:1},
