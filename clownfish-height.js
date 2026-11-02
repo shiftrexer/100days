@@ -3,14 +3,14 @@
   const apply=()=>{
     const el=document.getElementById('clownfishPasser');
     if(!el)return;
-    if(el.style.getPropertyValue('top')!=='75%' || el.style.getPropertyPriority('top')!=='important'){
-      el.style.setProperty('top','75%','important');
+    if(el.style.getPropertyValue('top')!=='72%' || el.style.getPropertyPriority('top')!=='important'){
+      el.style.setProperty('top','72%','important');
     }
     if(observed!==el){
       observed=el;
       new MutationObserver(()=>{
-        if(el.style.getPropertyValue('top')!=='75%' || el.style.getPropertyPriority('top')!=='important'){
-          el.style.setProperty('top','75%','important');
+        if(el.style.getPropertyValue('top')!=='72%' || el.style.getPropertyPriority('top')!=='important'){
+          el.style.setProperty('top','72%','important');
         }
       }).observe(el,{attributes:true,attributeFilter:['style']});
     }
