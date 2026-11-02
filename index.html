@@ -32,6 +32,13 @@
       <section class="screen active" id="homeScreen" aria-label="ホーム">
         <div class="elapsed" id="elapsedText">開始から1日目</div>
 
+        <section class="today-column" id="todayColumnCard">
+          <div class="eyebrow">TODAY'S COLUMN</div>
+          <h2 id="todayColumnTitle">DAY 1｜減量は「続けられる設計」が9割</h2>
+          <p>今日のコラムを1〜3分で読めます。</p>
+          <button class="text-button" data-open-column="0">読む →</button>
+        </section>
+
         <section class="water-section" aria-label="実施日数">
           <div class="water-orb" id="waterOrb" role="button" tabindex="0" aria-label="今日を実施済みにする" aria-disabled="false">
             <canvas id="waterCanvas" width="760" height="760" aria-hidden="true"></canvas>
@@ -62,13 +69,6 @@
         </section>
 
         <p class="helper" id="todayStatus">丸をタップすると、今日を実施済みにできます。</p>
-
-        <section class="today-column" id="todayColumnCard">
-          <div class="eyebrow">TODAY'S COLUMN</div>
-          <h2 id="todayColumnTitle">DAY 1｜減量は「続けられる設計」が9割</h2>
-          <p>今日のコラムを1〜3分で読めます。</p>
-          <button class="text-button" data-open-column="0">読む →</button>
-        </section>
 
         <section class="test-code-panel" aria-label="テスト用日付コード">
           <div class="test-code-label">TEST MODE</div>
