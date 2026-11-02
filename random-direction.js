@@ -10,7 +10,7 @@
 
   function mediaScale(el,cfg,dir){
     if(el.id==='crabPasser')return;
-    const media=el.querySelector('img,svg');
+    const media=el.querySelector('img,svg,.diver-art');
     if(!media)return;
     const normalFacing=cfg.normalScale;
     const scale=(dir===cfg.normal)?normalFacing:-normalFacing;
