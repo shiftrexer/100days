@@ -5,6 +5,7 @@
     tangPasser:30,
     clownfishPasser:40,
     pufferPasser:50,
+    pinkFishPasser:50,
     whaleSharkPasser:60,
     diverPasser:70,
     turtlePasser:80,
