@@ -31,8 +31,13 @@
   const active=new Map();
   const pendingStarts=new Map();
   const initialized=new WeakSet();
+  const forcedVisible=new WeakSet();
   const RARE_CREATURE_ID='pinkFishPasser';
   const RARE_APPEARANCE_CHANCE=0.15;
+  const CLOWNFISH_ID='clownfishPasser';
+  const SECRET_FLEE_COUNT=5;
+  let clownfishFleeCount=0;
+  let clownfishSecretTriggered=false;
   let suppressOrbClickUntil=0;
 
   function randomBetween(min,max){
@@ -74,17 +79,31 @@
         return;
       }
 
-      startPass(el,cfg);
+      startPass(el,cfg,false);
     },delay);
     pendingStarts.set(el,timer);
   }
 
-  function registerAnimation(el,cfg,anim,dir,escaping=false){
-    const entry={anim,dir,escaping};
+  function registerAnimation(el,cfg,anim,dir,escaping=false,forced=false){
+    const entry={anim,dir,escaping,forced};
     active.set(el,entry);
     anim.onfinish=()=>{
       if(active.get(el)!==entry)return;
       active.delete(el);
+
+      if(el.id===CLOWNFISH_ID){
+        clownfishFleeCount=0;
+        clownfishSecretTriggered=false;
+      }
+
+      if(forced){
+        forcedVisible.delete(el);
+        if(!el.classList.contains('show')){
+          el.style.visibility='hidden';
+          return;
+        }
+      }
+
       if(el.classList.contains('show'))schedulePass(el,cfg,false);
     };
     anim.oncancel=()=>{
@@ -92,13 +111,19 @@
     };
   }
 
-  function startPass(el,cfg){
-    if(!el.classList.contains('show'))return;
+  function startPass(el,cfg,forced=false){
+    if(!forced&&!el.classList.contains('show'))return;
     if(active.has(el))return;
 
+    if(forced)forcedVisible.add(el);
     el.style.animation='none';
     el.style.visibility='visible';
     initialized.add(el);
+
+    if(el.id===CLOWNFISH_ID){
+      clownfishFleeCount=0;
+      clownfishSecretTriggered=false;
+    }
 
     const dir=Math.random()<0.5?'ltr':'rtl';
     mediaScale(el,cfg,dir);
@@ -116,12 +141,23 @@
       {left:to,transform:'translateY(-51%) rotate(0deg)'}
     ],{duration:cfg.duration,easing:'linear',iterations:1,fill:'none'});
 
-    registerAnimation(el,cfg,anim,dir,false);
+    registerAnimation(el,cfg,anim,dir,false,forced);
+  }
+
+  function triggerRareAppearance(){
+    const el=document.getElementById(RARE_CREATURE_ID);
+    const cfg=creatures[RARE_CREATURE_ID];
+    if(!el||!cfg)return;
+
+    clearPending(el);
+    if(active.has(el))return;
+
+    startPass(el,cfg,true);
   }
 
   function flee(el,cfg){
     const entry=active.get(el);
-    if(!entry||!el.classList.contains('show'))return false;
+    if(!entry||(!el.classList.contains('show')&&!forcedVisible.has(el)))return false;
 
     const parent=el.offsetParent||el.parentElement;
     if(!parent)return false;
@@ -136,6 +172,7 @@
     const fullDistance=parentRect.width*1.34;
     const remaining=Math.abs(targetLeft-currentLeft);
     const duration=Math.max(140,(cfg.duration*(remaining/fullDistance))/5);
+    const forced=entry.forced===true;
 
     el.style.left=`${currentLeft}px`;
     entry.anim.cancel();
@@ -149,7 +186,16 @@
       {left:`${targetLeft}px`,transform:'translateY(-50%) rotate(0deg)'}
     ],{duration,easing:'linear',iterations:1,fill:'none'});
 
-    registerAnimation(el,cfg,anim,dir,true);
+    registerAnimation(el,cfg,anim,dir,true,forced);
+
+    if(el.id===CLOWNFISH_ID&&!clownfishSecretTriggered){
+      clownfishFleeCount++;
+      if(clownfishFleeCount>=SECRET_FLEE_COUNT){
+        clownfishSecretTriggered=true;
+        triggerRareAppearance();
+      }
+    }
+
     return true;
   }
 
@@ -164,7 +210,7 @@
     for(const id of reactiveIds){
       const el=document.getElementById(id);
       const cfg=creatures[id];
-      if(!el||!cfg||!el.classList.contains('show')||!active.has(el))continue;
+      if(!el||!cfg||(!el.classList.contains('show')&&!forcedVisible.has(el))||!active.has(el))continue;
       const r=el.getBoundingClientRect();
       const cx=r.left+r.width/2;
       const cy=r.top+r.height/2;
@@ -181,14 +227,19 @@
       const el=document.getElementById(id);
       if(!el)continue;
       const entry=active.get(el);
+      const shouldShow=el.classList.contains('show')||forcedVisible.has(el);
 
-      if(el.classList.contains('show')){
-        if(!entry&&!pendingStarts.has(el))schedulePass(el,cfg,!initialized.has(el));
+      if(shouldShow){
+        if(!entry&&!pendingStarts.has(el)&&!forcedVisible.has(el))schedulePass(el,cfg,!initialized.has(el));
       }else{
         clearPending(el);
         if(entry){
           entry.anim.cancel();
           active.delete(el);
+        }
+        if(id===CLOWNFISH_ID){
+          clownfishFleeCount=0;
+          clownfishSecretTriggered=false;
         }
         initialized.delete(el);
         el.style.visibility='hidden';
