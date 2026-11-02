@@ -94,7 +94,7 @@
     const targetLeft=dir==='ltr'?parentRect.width*1.10:-parentRect.width*0.24;
     const fullDistance=parentRect.width*1.34;
     const remaining=Math.abs(targetLeft-currentLeft);
-    const duration=Math.max(180,(cfg.duration*(remaining/fullDistance))/3);
+    const duration=Math.max(140,(cfg.duration*(remaining/fullDistance))/5);
 
     el.style.left=`${currentLeft}px`;
     entry.anim.cancel();
