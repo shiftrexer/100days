@@ -12,24 +12,20 @@
     bottlePasser:95
   };
 
-  function currentDay(){
-    if(typeof getCrabElapsedDay==='function') return getCrabElapsedDay();
+  function completedCount(){
     try{
       const st=JSON.parse(localStorage.getItem('100days-state-v1')||'{}');
-      const t=Number(st.testDay);
-      if(Number.isInteger(t)&&t>=1&&t<=100)return t;
-      const start=(st.startDate||new Date().toLocaleDateString('sv-SE'))+'T00:00:00';
-      const today=new Date().toLocaleDateString('sv-SE')+'T00:00:00';
-      return Math.max(1,Math.floor((new Date(today)-new Date(start))/86400000)+1);
-    }catch{return 1}
+      const dates=Array.isArray(st.completedDates)?st.completedDates:[];
+      return Math.min(100,new Set(dates).size);
+    }catch{return 0}
   }
 
   function apply(){
-    const day=currentDay();
+    const done=completedCount();
     for(const [id,threshold] of Object.entries(thresholds)){
       const el=document.getElementById(id);
       if(!el)continue;
-      const shouldShow=day>=threshold;
+      const shouldShow=done>=threshold;
       if(el.classList.contains('show')!==shouldShow){
         el.classList.toggle('show',shouldShow);
       }
