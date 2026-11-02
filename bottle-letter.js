@@ -150,7 +150,7 @@
     const targetCy=Math.min(vh*0.58,vh-150);
     const dx=targetCx-startCx;
     const dy=targetCy-startCy;
-    const scale=Math.min(3.1,Math.max(2.2,82/Math.max(1,bottleRect.height)));
+    const scale=10;
 
     await Promise.all([
       animateElement(overlay,[{background:'rgba(17,30,48,0)'},{background:'rgba(17,30,48,.28)'}],{duration:380,easing:'ease-out',fill:'forwards'}),
