@@ -1,6 +1,7 @@
 (()=>{
   const STORAGE_KEY='100days-bottle-letters-v1';
   const LETTER_DAYS=[95,96,97,98,99,100];
+  const HIT_PADDING=16;
   const letters={
     95:{title:'ここまで来たあなたへ',body:'95日間、積み重ねてきたものは数字だけではありません。続ける力そのものが、もうあなたの中に残っています。あと少しです。'},
     96:{title:'残り5日',body:'ゴールが近いほど、特別なことをしたくなります。でも最後まで大切なのは、いつも通りを続けること。今日も淡々と進めば大丈夫です。'},
@@ -37,9 +38,7 @@
     }catch{return {collectedDays:[],pickedDates:[]}}
   }
 
-  function save(st){
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(st));
-  }
+  function save(st){localStorage.setItem(STORAGE_KEY,JSON.stringify(st));}
 
   function nextLetterDay(done=completedCount()){
     const st=load();
@@ -120,10 +119,19 @@
     if(bottle){
       bottle.classList.remove('show');
       bottle.style.visibility='hidden';
+      bottle.style.pointerEvents='none';
     }
     showLetter(day);
     window.dispatchEvent(new CustomEvent('bottle-letter-picked',{detail:{day,date:today}}));
     return true;
+  }
+
+  function isBottleHit(e){
+    const bottle=document.getElementById('bottlePasser');
+    if(!bottle||!isAvailable())return false;
+    if(!bottle.classList.contains('show')||bottle.style.visibility==='hidden')return false;
+    const r=bottle.getBoundingClientRect();
+    return e.clientX>=r.left-HIT_PADDING&&e.clientX<=r.right+HIT_PADDING&&e.clientY>=r.top-HIT_PADDING&&e.clientY<=r.bottom+HIT_PADDING;
   }
 
   function wireBottle(){
@@ -136,29 +144,46 @@
     bottle.removeAttribute('aria-hidden');
 
     bottle.addEventListener('pointerdown',e=>{
-      e.stopPropagation();
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      pickup();
     });
     bottle.addEventListener('click',e=>{
       e.preventDefault();
-      e.stopPropagation();
-      pickup();
+      e.stopImmediatePropagation();
     });
     bottle.addEventListener('keydown',e=>{
       if(e.key==='Enter'||e.key===' '){
         e.preventDefault();
-        e.stopPropagation();
+        e.stopImmediatePropagation();
         pickup();
       }
     });
+  }
+
+  function wireOrbCapture(){
+    const orb=document.getElementById('waterOrb');
+    if(!orb||orb.dataset.bottleCaptureWired==='1')return;
+    orb.dataset.bottleCaptureWired='1';
+    orb.addEventListener('pointerdown',e=>{
+      if(!isBottleHit(e))return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      pickup();
+    },true);
   }
 
   function syncBottleInteractivity(){
     const bottle=document.getElementById('bottlePasser');
     if(!bottle)return;
     wireBottle();
+    wireOrbCapture();
     if(!isAvailable()){
       bottle.classList.remove('show');
       bottle.style.visibility='hidden';
+      bottle.style.pointerEvents='none';
+    }else{
+      bottle.style.pointerEvents='auto';
     }
   }
 
