@@ -2,7 +2,9 @@
   const STORAGE_KEY='100days-bottle-letters-v1';
   const LETTER_DAYS=[95,96,97,98,99,100];
   const HIT_PADDING=16;
+  const ZOOM_SCALE=10;
   let pickupInProgress=false;
+  let observedTestDay=null;
 
   const letters={
     95:{title:'ここまで来たあなたへ',body:'95日間、積み重ねてきたものは数字だけではありません。続ける力そのものが、もうあなたの中に残っています。あと少しです。'},
@@ -22,12 +24,19 @@
     }
   }
 
+  function appState(){
+    try{return JSON.parse(localStorage.getItem('100days-state-v1')||'{}')}catch{return {}}
+  }
+
   function completedCount(){
-    try{
-      const st=JSON.parse(localStorage.getItem('100days-state-v1')||'{}');
-      const dates=Array.isArray(st.completedDates)?st.completedDates:[];
-      return Math.min(100,new Set(dates).size);
-    }catch{return 0}
+    const st=appState();
+    const dates=Array.isArray(st.completedDates)?st.completedDates:[];
+    return Math.min(100,new Set(dates).size);
+  }
+
+  function currentTestDay(){
+    const n=Number(appState().testDay);
+    return Number.isInteger(n)&&n>=1&&n<=100?n:null;
   }
 
   function load(){
@@ -52,6 +61,26 @@
     return nextLetterDay(done)!==null;
   }
 
+  function syncTestDayReset(){
+    const testDay=currentTestDay();
+    if(observedTestDay===null){
+      observedTestDay=testDay;
+      return;
+    }
+    if(testDay===observedTestDay)return;
+    observedTestDay=testDay;
+    if(!LETTER_DAYS.includes(testDay))return;
+
+    const st=load();
+    st.collectedDays=st.collectedDays.filter(day=>day!==testDay);
+    save(st);
+    pickupInProgress=false;
+    document.querySelectorAll('.bottle-open-overlay').forEach(el=>el.remove());
+    const dialog=document.getElementById('bottleLetterDialog');
+    if(dialog&&dialog.open)dialog.close();
+    window.dispatchEvent(new CustomEvent('bottle-letter-test-reset',{detail:{day:testDay}}));
+  }
+
   function ensureStyle(){
     if(document.getElementById('bottleLetterStyle'))return;
     const s=document.createElement('style');
@@ -69,8 +98,8 @@
       .bottle-letter-seal{margin-top:22px;font-size:12px;color:#9aa6b3;text-align:right;}
 
       .bottle-open-overlay{position:fixed;inset:0;z-index:9998;pointer-events:none;background:rgba(17,30,48,0);overflow:hidden;}
-      .bottle-open-bottle{position:fixed;display:block;object-fit:contain;z-index:2;filter:drop-shadow(0 12px 20px rgba(22,39,59,.22));transform-origin:center;will-change:transform,opacity,left,top;}
-      .bottle-open-paper{position:fixed;z-index:1;width:18px;height:42px;border-radius:3px;background:linear-gradient(90deg,#efe5c8 0%,#fffaf0 45%,#f1e7ca 100%);box-shadow:0 5px 15px rgba(41,52,69,.16);opacity:0;transform-origin:center bottom;will-change:transform,opacity,width,height,left,top;border-radius;}
+      .bottle-open-bottle{position:fixed;display:block;object-fit:contain;z-index:2;filter:drop-shadow(0 12px 20px rgba(22,39,59,.22));transform-origin:center;will-change:transform,opacity;image-rendering:auto;-webkit-backface-visibility:hidden;backface-visibility:hidden;}
+      .bottle-open-paper{position:fixed;z-index:1;width:18px;height:42px;border-radius:3px;background:linear-gradient(90deg,#efe5c8 0%,#fffaf0 45%,#f1e7ca 100%);box-shadow:0 5px 15px rgba(41,52,69,.16);opacity:0;transform-origin:center bottom;will-change:transform,opacity,width,height,left,top,border-radius;}
       .bottle-open-paper::before,.bottle-open-paper::after{content:'';position:absolute;left:4px;right:4px;height:1px;background:rgba(120,103,70,.18);}
       .bottle-open-paper::before{top:13px;}.bottle-open-paper::after{top:21px;}
       @media (prefers-reduced-motion:reduce){.bottle-open-overlay{display:none !important;}}
@@ -126,22 +155,6 @@
     const overlay=document.createElement('div');
     overlay.className='bottle-open-overlay';
 
-    const bottle=document.createElement('img');
-    bottle.className='bottle-open-bottle';
-    bottle.alt='';
-    bottle.src=bottleSrc||'';
-    bottle.style.left=`${bottleRect.left}px`;
-    bottle.style.top=`${bottleRect.top}px`;
-    bottle.style.width=`${Math.max(1,bottleRect.width)}px`;
-    bottle.style.height=`${Math.max(1,bottleRect.height)}px`;
-
-    const paper=document.createElement('div');
-    paper.className='bottle-open-paper';
-
-    overlay.appendChild(paper);
-    overlay.appendChild(bottle);
-    document.body.appendChild(overlay);
-
     const vw=window.innerWidth;
     const vh=window.innerHeight;
     const startCx=bottleRect.left+bottleRect.width/2;
@@ -150,28 +163,50 @@
     const targetCy=Math.min(vh*0.58,vh-150);
     const dx=targetCx-startCx;
     const dy=targetCy-startCy;
-    const scale=10;
+    const largeW=Math.max(1,bottleRect.width)*ZOOM_SCALE;
+    const largeH=Math.max(1,bottleRect.height)*ZOOM_SCALE;
+    const largeLeft=startCx-largeW/2;
+    const largeTop=startCy-largeH/2;
+    const initialScale=1/ZOOM_SCALE;
+
+    const bottle=document.createElement('img');
+    bottle.className='bottle-open-bottle';
+    bottle.alt='';
+    bottle.decoding='sync';
+    bottle.src=bottleSrc||'';
+    bottle.style.left=`${largeLeft}px`;
+    bottle.style.top=`${largeTop}px`;
+    bottle.style.width=`${largeW}px`;
+    bottle.style.height=`${largeH}px`;
+
+    const paper=document.createElement('div');
+    paper.className='bottle-open-paper';
+
+    overlay.appendChild(paper);
+    overlay.appendChild(bottle);
+    document.body.appendChild(overlay);
+
+    try{if(typeof bottle.decode==='function')await bottle.decode()}catch{}
 
     await Promise.all([
       animateElement(overlay,[{background:'rgba(17,30,48,0)'},{background:'rgba(17,30,48,.28)'}],{duration:380,easing:'ease-out',fill:'forwards'}),
       animateElement(bottle,[
-        {transform:'translate(0,0) scale(1) rotate(0deg)'},
-        {offset:.72,transform:`translate(${dx}px,${dy}px) scale(${scale*.94}) rotate(-7deg)`},
-        {transform:`translate(${dx}px,${dy}px) scale(${scale}) rotate(-4deg)`}
+        {transform:`translate(0,0) scale(${initialScale}) rotate(0deg)`},
+        {offset:.72,transform:`translate(${dx}px,${dy}px) scale(.94) rotate(-7deg)`},
+        {transform:`translate(${dx}px,${dy}px) scale(1) rotate(-4deg)`}
       ],{duration:520,easing:'cubic-bezier(.2,.8,.2,1)',fill:'forwards'})
     ]);
 
-    const bottleDisplayH=Math.max(1,bottleRect.height)*scale;
     const paperStartX=targetCx-9;
-    const paperStartY=targetCy-bottleDisplayH*.30;
+    const paperStartY=targetCy-largeH*.30;
     paper.style.left=`${paperStartX}px`;
     paper.style.top=`${paperStartY}px`;
 
     await Promise.all([
       animateElement(bottle,[
-        {transform:`translate(${dx}px,${dy}px) scale(${scale}) rotate(-4deg)`},
-        {transform:`translate(${dx}px,${dy+5}px) scale(${scale}) rotate(5deg)`},
-        {transform:`translate(${dx}px,${dy}px) scale(${scale}) rotate(-2deg)`}
+        {transform:`translate(${dx}px,${dy}px) scale(1) rotate(-4deg)`},
+        {transform:`translate(${dx}px,${dy+5}px) scale(1) rotate(5deg)`},
+        {transform:`translate(${dx}px,${dy}px) scale(1) rotate(-2deg)`}
       ],{duration:360,easing:'ease-in-out',fill:'forwards'}),
       animateElement(paper,[
         {opacity:0,transform:'translateY(20px) scaleY(.45) rotate(3deg)'},
@@ -181,13 +216,13 @@
     ]);
 
     await animateElement(bottle,[
-      {opacity:1,transform:`translate(${dx}px,${dy}px) scale(${scale}) rotate(-2deg)`},
-      {opacity:.55,transform:`translate(${dx}px,${dy+28}px) scale(${scale*.88}) rotate(8deg)`},
-      {opacity:0,transform:`translate(${dx}px,${dy+50}px) scale(${scale*.72}) rotate(12deg)`}
+      {opacity:1,transform:`translate(${dx}px,${dy}px) scale(1) rotate(-2deg)`},
+      {opacity:.55,transform:`translate(${dx}px,${dy+28}px) scale(.88) rotate(8deg)`},
+      {opacity:0,transform:`translate(${dx}px,${dy+50}px) scale(.72) rotate(12deg)`}
     ],{duration:330,easing:'ease-in',fill:'forwards'});
 
-    const finalW=Math.min(vw*0.78,330);
-    const finalH=Math.min(vh*0.56,430);
+    const finalW=Math.min(vw*.78,330);
+    const finalH=Math.min(vh*.56,430);
     const currentPaperTop=paperStartY-74;
     const finalLeft=(vw-finalW)/2;
     const finalTop=Math.max(70,(vh-finalH)/2);
@@ -282,6 +317,7 @@
   }
 
   function syncBottleInteractivity(){
+    syncTestDayReset();
     const bottle=document.getElementById('bottlePasser');
     if(!bottle)return;
     wireBottle();
@@ -298,8 +334,9 @@
   function init(){
     ensureStyle();
     ensureDialog();
+    observedTestDay=currentTestDay();
     syncBottleInteractivity();
-    setInterval(syncBottleInteractivity,500);
+    setInterval(syncBottleInteractivity,250);
   }
 
   window.BottleLetters={isAvailable,pickup,nextLetterDay};
