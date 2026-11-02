@@ -33,9 +33,6 @@
       if(el.classList.contains('show')!==shouldShow){
         el.classList.toggle('show',shouldShow);
       }
-      if(id==='bottlePasser'&&shouldShow&&el.style.visibility==='hidden'){
-        el.style.visibility='';
-      }
     }
   }
 
