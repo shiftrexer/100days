@@ -33,7 +33,7 @@
   const initialized=new WeakSet();
   const forcedVisible=new WeakSet();
   const RARE_CREATURE_ID='pinkFishPasser';
-  const RARE_APPEARANCE_CHANCE=0.15;
+  const RARE_APPEARANCE_CHANCE=0.10;
   const CLOWNFISH_ID='clownfishPasser';
   const SECRET_FLEE_COUNT=5;
   let clownfishFleeCount=0;
