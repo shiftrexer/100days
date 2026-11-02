@@ -27,8 +27,9 @@
     const dir=Math.random()<0.5?'ltr':'rtl';
     mediaScale(el,cfg,dir);
 
-    const from=dir==='ltr'?'-24%':'110%';
-    const to=dir==='ltr'?'110%':'-24%';
+    const whale=el.id==='whaleSharkPasser';
+    const from=whale?(dir==='ltr'?'-5%':'72%'):(dir==='ltr'?'-24%':'110%');
+    const to=whale?(dir==='ltr'?'104%':'-28%'):(dir==='ltr'?'110%':'-24%');
     el.style.left=from;
 
     const anim=el.animate([
