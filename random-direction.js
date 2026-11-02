@@ -29,7 +29,13 @@
   };
   const reactiveIds=new Set(Object.keys(creatures));
   const active=new Map();
+  const pendingStarts=new Map();
+  const initialized=new WeakSet();
   let suppressOrbClickUntil=0;
+
+  function randomBetween(min,max){
+    return min+Math.random()*(max-min);
+  }
 
   function mediaScale(el,cfg,dir){
     if(el.id==='crabPasser')return;
@@ -41,13 +47,37 @@
     media.style.transformOrigin='center';
   }
 
+  function clearPending(el){
+    const timer=pendingStarts.get(el);
+    if(timer){
+      clearTimeout(timer);
+      pendingStarts.delete(el);
+    }
+  }
+
+  function schedulePass(el,cfg,initial=false){
+    if(!el.classList.contains('show'))return;
+    if(active.has(el)||pendingStarts.has(el))return;
+
+    el.style.animation='none';
+    el.style.visibility='hidden';
+
+    const delay=initial?randomBetween(200,7200):randomBetween(1000,5000);
+    const timer=setTimeout(()=>{
+      pendingStarts.delete(el);
+      if(!el.classList.contains('show')||active.has(el))return;
+      startPass(el,cfg);
+    },delay);
+    pendingStarts.set(el,timer);
+  }
+
   function registerAnimation(el,cfg,anim,dir,escaping=false){
     const entry={anim,dir,escaping};
     active.set(el,entry);
     anim.onfinish=()=>{
       if(active.get(el)!==entry)return;
       active.delete(el);
-      if(el.classList.contains('show'))startPass(el,cfg);
+      if(el.classList.contains('show'))schedulePass(el,cfg,false);
     };
     anim.oncancel=()=>{
       if(active.get(el)===entry)active.delete(el);
@@ -59,6 +89,9 @@
     if(active.has(el))return;
 
     el.style.animation='none';
+    el.style.visibility='visible';
+    initialized.add(el);
+
     const dir=Math.random()<0.5?'ltr':'rtl';
     mediaScale(el,cfg,dir);
 
@@ -140,11 +173,17 @@
       const el=document.getElementById(id);
       if(!el)continue;
       const entry=active.get(el);
+
       if(el.classList.contains('show')){
-        if(!entry)startPass(el,cfg);
-      }else if(entry){
-        entry.anim.cancel();
-        active.delete(el);
+        if(!entry&&!pendingStarts.has(el))schedulePass(el,cfg,!initialized.has(el));
+      }else{
+        clearPending(el);
+        if(entry){
+          entry.anim.cancel();
+          active.delete(el);
+        }
+        initialized.delete(el);
+        el.style.visibility='hidden';
       }
     }
   }
