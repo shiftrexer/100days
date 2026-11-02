@@ -24,6 +24,8 @@
     #todayColumnCard h2{font-size:15px !important;line-height:1.15 !important;}
     #todayColumnCard p{font-size:10px !important;line-height:1.2 !important;margin:3px 0 2px !important;}
     #todayColumnCard .text-button{font-size:11px !important;line-height:1.1;padding:0 !important;}
+    #elapsedText{margin:14px 0 1px !important;}
+    #homeScreen .water-section{padding-top:10px !important;}
   </style>
 </head>
 <body>
@@ -35,14 +37,14 @@
 
     <main>
       <section class="screen active" id="homeScreen" aria-label="ホーム">
-        <div class="elapsed" id="elapsedText">開始から1日目</div>
-
         <section class="today-column" id="todayColumnCard">
           <div class="eyebrow">TODAY'S COLUMN</div>
           <h2 id="todayColumnTitle">DAY 1｜減量は「続けられる設計」が9割</h2>
           <p>今日のコラムを1〜3分で読めます。</p>
           <button class="text-button" data-open-column="0">読む →</button>
         </section>
+
+        <div class="elapsed" id="elapsedText">開始から1日目</div>
 
         <section class="water-section" aria-label="実施日数">
           <div class="water-orb" id="waterOrb" role="button" tabindex="0" aria-label="今日を実施済みにする" aria-disabled="false">
