@@ -43,14 +43,12 @@
   function save(st){localStorage.setItem(STORAGE_KEY,JSON.stringify(st));}
 
   function nextLetterDay(done=completedCount()){
+    if(!LETTER_DAYS.includes(done))return null;
     const st=load();
-    return LETTER_DAYS.find(day=>day<=done&&!st.collectedDays.includes(day))||null;
+    return st.collectedDays.includes(done)?null:done;
   }
 
   function isAvailable(done=completedCount()){
-    if(done<LETTER_DAYS[0])return false;
-    const st=load();
-    if(st.pickedDates.includes(todayKey()))return false;
     return nextLetterDay(done)!==null;
   }
 
@@ -163,7 +161,6 @@
       ],{duration:520,easing:'cubic-bezier(.2,.8,.2,1)',fill:'forwards'})
     ]);
 
-    const bottleDisplayW=Math.max(1,bottleRect.width)*scale;
     const bottleDisplayH=Math.max(1,bottleRect.height)*scale;
     const paperStartX=targetCx-9;
     const paperStartY=targetCy-bottleDisplayH*.30;
