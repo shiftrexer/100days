@@ -4,8 +4,7 @@
     clownfishPasser:{duration:17000,normal:'ltr',normalScale:1},
     tangPasser:{duration:21000,normal:'ltr',normalScale:-1},
     turtlePasser:{duration:24000,normal:'ltr',normalScale:1},
-    diverPasser:{duration:26000,normal:'rtl',normalScale:1},
-    whaleSharkPasser:{duration:29000,normal:'rtl',normalScale:1}
+    diverPasser:{duration:26000,normal:'rtl',normalScale:1}
   };
   const active=new Map();
 
@@ -27,9 +26,8 @@
     const dir=Math.random()<0.5?'ltr':'rtl';
     mediaScale(el,cfg,dir);
 
-    const whale=el.id==='whaleSharkPasser';
-    const from=whale?(dir==='ltr'?'-5%':'72%'):(dir==='ltr'?'-24%':'110%');
-    const to=whale?(dir==='ltr'?'104%':'-28%'):(dir==='ltr'?'110%':'-24%');
+    const from=dir==='ltr'?'-24%':'110%';
+    const to=dir==='ltr'?'110%':'-24%';
     el.style.left=from;
 
     const anim=el.animate([
