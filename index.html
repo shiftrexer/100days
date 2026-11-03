@@ -47,7 +47,7 @@
         <div class="elapsed" id="elapsedText">開始から1日目</div>
 
         <section class="water-section" aria-label="実施日数">
-          <div class="water-orb" id="waterOrb" role="button" tabindex="0" aria-label="今日を実施済みにする" aria-disabled="false">
+          <div class="water-orb" id="waterOrb">
             <canvas id="waterCanvas" width="760" height="760" aria-hidden="true"></canvas>
             <div class="orb-glass" aria-hidden="true"></div>
             <div class="orb-label">
@@ -75,7 +75,7 @@
           </div>
         </section>
 
-        <p class="helper" id="todayStatus">丸をタップすると、今日を実施済みにできます。</p>
+        <p class="helper" id="todayStatus">実施日数を表示しています。</p>
 
         <section class="test-code-panel" aria-label="テスト用日付コード">
           <div class="test-code-label">TEST MODE</div>
@@ -155,7 +155,7 @@
     </article>
   </dialog>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=20261103-nocompletion"></script>
   <script src="undo.js?v=20261102-fish2"></script>
   <script src="fish-fix.js?v=20261102-clown4"></script>
   <script src="clownfish-height.js?v=20261103-clownheight72"></script>
