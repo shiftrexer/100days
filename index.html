@@ -88,18 +88,14 @@
         </section>
       </section>
 
-      <section class="screen" id="recordScreen" aria-label="記録">
-        <div class="page-heading">
-          <div class="eyebrow">DAILY LOG</div>
-          <h1>今日の記録</h1>
-          <p>体重などを入力して保存します。</p>
-        </div>
-        <form class="form-card" id="recordForm">
-          <label>体重 <span>kg</span><input id="weightInput" type="number" inputmode="decimal" step="0.1" min="20" max="300" placeholder="例 72.4" /></label>
-          <label>体脂肪率 <span>%</span><input id="fatInput" type="number" inputmode="decimal" step="0.1" min="1" max="70" placeholder="例 24.8" /></label>
-          <label>歩数 <span>steps</span><input id="stepsInput" type="number" inputmode="numeric" min="0" max="100000" placeholder="例 8000" /></label>
-          <label>メモ<textarea id="memoInput" rows="4" placeholder="今日の調子、食事、トレーニングなど"></textarea></label>
-          <button class="primary-action" type="submit">記録を保存</button>
+      <section class="screen" id="recordScreen" aria-label="実施">
+        <div id="dailyExecutionApp"></div>
+
+        <form id="recordForm" style="display:none" aria-hidden="true">
+          <input id="weightInput" type="number" />
+          <input id="fatInput" type="number" />
+          <input id="stepsInput" type="number" />
+          <textarea id="memoInput"></textarea>
         </form>
       </section>
 
@@ -129,7 +125,7 @@
 
     <nav class="bottom-nav" aria-label="メインナビゲーション">
       <button class="nav-item active" data-screen="homeScreen"><span class="nav-icon">⌂</span><span>ホーム</span></button>
-      <button class="nav-item" data-screen="recordScreen"><span class="nav-icon">＋</span><span>記録</span></button>
+      <button class="nav-item" data-screen="recordScreen"><span class="nav-icon">✓</span><span>実施</span></button>
       <button class="nav-item" data-screen="columnsScreen"><span class="nav-icon">▤</span><span>コラム</span></button>
       <button class="nav-item" data-screen="progressScreen"><span class="nav-icon">◷</span><span>進捗</span></button>
     </nav>
@@ -157,6 +153,7 @@
 
   <script src="app.js?v=20261103-nocompletion"></script>
   <script src="undo.js?v=20261102-fish2"></script>
+  <script src="daily-execution.js?v=20261103-daily1"></script>
   <script src="fish-fix.js?v=20261102-clown4"></script>
   <script src="clownfish-height.js?v=20261103-clownheight72"></script>
   <script src="turtle.js?v=20261102-turtle1"></script>
