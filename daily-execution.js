@@ -3,11 +3,11 @@
   const EXEC_KEY='100days-daily-execution-v1';
   const DAY=86400000;
 
-  // 仮タスク。内容はここだけ差し替えれば毎日の表示内容を変更できます。
+  // 毎日必ず記録する3カテゴリ。各DAYの具体的な指示内容は後から100日分差し替えます。
   const DAILY_TASKS=[
-    {id:'move',title:'今日の運動をする',detail:'今日予定している運動を完了する'},
-    {id:'meal',title:'食事を整える',detail:'今日の食事を意識して過ごす'},
-    {id:'review',title:'今日を振り返る',detail:'1日の実施内容を確認する'}
+    {id:'cardio',title:'有酸素',detail:'このDAYに設定された有酸素メニューに従って実施する'},
+    {id:'diet',title:'食事',detail:'このDAYに設定された食事内容に従って実施する'},
+    {id:'strength',title:'筋トレ',detail:'このDAYに設定された筋トレメニューに従って実施する'}
   ];
 
   function readState(){
@@ -129,7 +129,7 @@
         <header class="execution-head">
           <div class="eyebrow">DAILY ACTION</div>
           <h1>今日の実施</h1>
-          <p>今日やることをすべて完了すると、ホームの水が1日分増えます。</p>
+          <p>有酸素・食事・筋トレをすべて完了すると、ホームの水が1日分増えます。</p>
         </header>
         <div class="execution-summary">
           <div>
@@ -149,7 +149,7 @@
             </button>`).join('')}
         </div>
         <div class="execution-complete" ${completed?'':'hidden'}>本日の実施は完了しています ✓</div>
-        <p class="execution-note">すべて完了した日だけ、実施日数として1日カウントされます。</p>
+        <p class="execution-note">3項目すべてを完了した日だけ、実施日数として1日カウントされます。</p>
       </div>`;
 
     root.querySelectorAll('[data-execution-task]').forEach(btn=>{
