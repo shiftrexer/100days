@@ -5,7 +5,7 @@
 
   // 毎日必ず記録する3カテゴリ。各DAYの具体的な指示内容は後から100日分差し替えます。
   const DAILY_TASKS=[
-    {id:'cardio',title:'有酸素',detail:'このDAYに設定された有酸素メニューに従って実施する'},
+    {id:'cardio',title:'有酸素',detail:'20分間のウォーキング（タイマーで計測）'},
     {id:'diet',title:'食事',detail:'このDAYに設定された食事内容に従って実施する'},
     {id:'strength',title:'筋トレ',detail:'このDAYに設定された筋トレメニューに従って実施する'}
   ];
@@ -117,6 +117,7 @@
     const st=readState();
     const date=currentDate(st);
     const dayNumber=currentDayNumber(st);
+    if(window.CardioTimer)window.CardioTimer.dayChanged(date);
     const completed=isCompleted(st,date);
     const checks=checksFor(date);
     if(completed){
@@ -140,7 +141,7 @@
         </div>
         <div class="execution-list">
           ${DAILY_TASKS.map(task=>`
-            <button class="execution-task ${checks[task.id]?'is-done':''}" type="button" data-execution-task="${task.id}" ${completed?'disabled':''}>
+            <button class="execution-task ${checks[task.id]?'is-done':''}" type="button" data-execution-task="${task.id}" ${(completed||(task.id==='cardio'&&checks.cardio))?'disabled':''}>
               <span class="execution-check">✓</span>
               <span>
                 <span class="execution-title">${task.title}</span>
@@ -156,6 +157,11 @@
       btn.addEventListener('click',()=>{
         if(isCompleted(readState(),date))return;
         const id=btn.dataset.executionTask;
+        if(id==='cardio'){
+          if(checksFor(date).cardio)return;
+          if(window.CardioTimer)window.CardioTimer.open(date,dayNumber);
+          return;
+        }
         const latest=checksFor(date);
         saveCheck(date,id,!latest[id]);
         const after=checksFor(date);
@@ -174,6 +180,17 @@
 
   function init(){
     ensureStyle();
+    window.addEventListener('cardio-timer-complete',event=>{
+      const date=event.detail&&event.detail.date;
+      if(!date||date!==currentDate(readState())||isCompleted(readState(),date))return;
+      saveCheck(date,'cardio',true);
+      const checks=checksFor(date);
+      if(allDone(checks)){
+        const added=completeDay(date);
+        render();
+        if(added)setTimeout(()=>location.reload(),650);
+      }else render();
+    });
     render();
     const apply=document.getElementById('applyTestCodeBtn');
     if(apply)apply.addEventListener('click',()=>setTimeout(render,60));
